@@ -1,0 +1,35 @@
+{
+    "name": "ems-api",
+    "version": "1.0.0",
+    "description": "A Node / Express powered REST API for the Enquiry Management System",
+    "main": "index.js",
+    "scripts": {
+        "test": "jest --verbose"
+    },
+    "jest": {
+        "testEnvironment": "node",
+        "coveragePathIgnorePatterns": [
+            "/node_modules/"
+        ]
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/PTFS-Europe/ems-api.git"
+    },
+    "author": "Andrew Isherwood <andrew.isherwood@ptfs-europe.com>",
+    "license": "UNLICENSED",
+    "bugs": {
+        "url": "https://github.com/PTFS-Europe/ems-api/issues"
+    },
+    "homepage": "https://github.com/PTFS-Europe/ems-api#readme",
+    "dependencies": {
+        "body-parser": "^1.19.0",
+        "express": "^4.17.1",
+        "express-openapi-validator": "^3.12.1",
+        "helmet": "^3.22.0",
+        "morgan": "^1.10.0"
+    },
+    "devDependencies": {
+        "jest": "^25.2.7"
+    }
+}

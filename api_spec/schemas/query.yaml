@@ -1,0 +1,16 @@
+type: object
+properties:
+  id:
+    type: integer
+    nullable: true
+  title:
+    type: string
+  folder_id:
+    type: integer
+    nullable: true
+  created_at:
+    type: string
+    nullable: true
+  updated_at:
+    type: string
+    nullable: true

@@ -1,0 +1,196 @@
+openapi: 3.0.0
+info:
+  title: Enquiry Management System API
+  description: Spec for Enquiry Management System API
+  version: 1.0.0
+servers:
+  - url: /api/v1.0
+
+paths:
+  /queries:
+    get:
+      summary: Returns all queries
+      operationId: getQueries
+      responses:
+        '200':
+          description: An array of query objects
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas/queries.yaml'
+        '500':
+          description: Server error
+    post:
+      summary: Create a new query
+      operationId: createQuery
+      requestBody:
+        $ref: '#/components/requestBodies/QueryBody'
+      responses:
+        '201':
+          description: The created query object
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas/query.yaml'
+        '404':
+          description: Query not found
+        '500':
+          description: Server error
+  /queries/{id}:
+    get:
+      summary: Returns specific query
+      operationId: getQueryById
+      parameters:
+        - name: id
+          in: path
+          description: Query ID
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: A single query object
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas/query.yaml'
+        '404':
+          description: Query not found
+        '500':
+          description: Server error
+    put:
+      summary: Update an existing query
+      operationId: updateQuery
+      parameters:
+        - name: id
+          in: path
+          description: Query ID
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        $ref: '#/components/requestBodies/QueryBody'
+      responses:
+        '200':
+          description: The updated query object
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas/query.yaml'
+        '404':
+          description: Query not found
+        '500':
+          description: Server error
+    delete:
+      summary: Delete a query
+      operationId: deleteQuery
+      parameters:
+        - name: id
+          in: path
+          description: Query ID
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Successful deletion
+          content:
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: Query not found
+        '500':
+          description: Server error
+  /messages:
+    get:
+      summary: Returns all messages
+      operationId: getMessages
+      responses:
+        '200':
+          description: An array of message objects
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas/messages.yaml'
+        '500':
+          description: Server error
+    post:
+      summary: Create a new message
+      operationId: createMessage
+      requestBody:
+        $ref: '#/components/requestBodies/MessageBody'
+      responses:
+        '201':
+          description: The created message object
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas/message.yaml'
+        '404':
+          description: Message not found
+        '500':
+          description: Server error
+  /queries/{id}:
+    put:
+      summary: Update an existing message
+      operationId: updateMessage
+      parameters:
+        - name: id
+          in: path
+          description: Message ID
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        $ref: '#/components/requestBodies/MessageBody'
+      responses:
+        '200':
+          description: The updated message object
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas/message.yaml'
+        '404':
+          description: Message not found
+        '500':
+          description: Server error
+    delete:
+      summary: Delete a message
+      operationId: deleteMessage
+      parameters:
+        - name: id
+          in: path
+          description: Message ID
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Successful deletion
+          content:
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: Message not found
+        '500':
+          description: Server error
+
+components:
+  requestBodies:
+    QueryBody:
+      description: A JSON object describing a query
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: 'schemas/query.yaml'
+    MessageBody:
+      description: A JSON object describing a message
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: 'schemas/message.yaml'
+
