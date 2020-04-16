@@ -106,6 +106,19 @@ paths:
     get:
       summary: Returns all messages
       operationId: getMessages
+      parameters:
+        - name: offset
+          in: query
+          required: false
+          description: The record index to start returning (e.g. 1 = second record)
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          required: false
+          description: The number of records to return
+          schema:
+            type: integer
       responses:
         '200':
           description: An array of message objects
