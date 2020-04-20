@@ -276,6 +276,80 @@ paths:
           description: Folder not found
         '500':
           description: Server error
+  /labels:
+    get:
+      summary: Returns all labels
+      operationId: getLabels
+      responses:
+        '200':
+          description: An array of label objects
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas/labels.yaml'
+        '500':
+          description: Server error
+    post:
+      summary: Create a new label
+      operationId: createLabel
+      requestBody:
+        $ref: '#/components/requestBodies/LabelBody'
+      responses:
+        '201':
+          description: The created label object
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas/label.yaml'
+        '404':
+          description: Label not found
+        '500':
+          description: Server error
+  /labels/{id}:
+    put:
+      summary: Update an existing labels
+      operationId: updateLabel
+      parameters:
+        - name: id
+          in: path
+          description: Label ID
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        $ref: '#/components/requestBodies/LabelBody'
+      responses:
+        '200':
+          description: The updated label object
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas/label.yaml'
+        '404':
+          description: Label not found
+        '500':
+          description: Server error
+    delete:
+      summary: Delete a label
+      operationId: deleteLabel
+      parameters:
+        - name: id
+          in: path
+          description: Label ID
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Successful deletion
+          content:
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: Label not found
+        '500':
+          description: Server error
 
 components:
   requestBodies:
@@ -300,3 +374,10 @@ components:
         application/json:
           schema:
             $ref: 'schemas/folder.yaml'
+    LabelBody:
+      description: A JSON object describing a label
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: 'schemas/label.yaml'
