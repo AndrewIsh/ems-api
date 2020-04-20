@@ -1,0 +1,13 @@
+type: object
+properties:
+  id:
+    type: integer
+    nullable: true
+  name:
+    type: string
+  created_at:
+    type: string
+    nullable: true
+  updated_at:
+    type: string
+    nullable: true

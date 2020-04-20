@@ -202,6 +202,80 @@ paths:
           description: Message not found
         '500':
           description: Server error
+  /folders:
+    get:
+      summary: Returns all folders
+      operationId: getFolders
+      responses:
+        '200':
+          description: An array of folder objects
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas/folders.yaml'
+        '500':
+          description: Server error
+    post:
+      summary: Create a new folder
+      operationId: createFolder
+      requestBody:
+        $ref: '#/components/requestBodies/FolderBody'
+      responses:
+        '201':
+          description: The created folder object
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas/folder.yaml'
+        '404':
+          description: Folder not found
+        '500':
+          description: Server error
+  /folders/{id}:
+    put:
+      summary: Update an existing folder
+      operationId: updateFolder
+      parameters:
+        - name: id
+          in: path
+          description: Folder ID
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        $ref: '#/components/requestBodies/FolderBody'
+      responses:
+        '200':
+          description: The updated folder object
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas/folder.yaml'
+        '404':
+          description: Folder not found
+        '500':
+          description: Server error
+    delete:
+      summary: Delete a folder
+      operationId: deleteFolder
+      parameters:
+        - name: id
+          in: path
+          description: Folder ID
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Successful deletion
+          content:
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: Folder not found
+        '500':
+          description: Server error
 
 components:
   requestBodies:
@@ -219,3 +293,10 @@ components:
         application/json:
           schema:
             $ref: 'schemas/message.yaml'
+    FolderBody:
+      description: A JSON object describing a folder
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: 'schemas/folder.yaml'
