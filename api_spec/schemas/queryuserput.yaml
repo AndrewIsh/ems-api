@@ -1,0 +1,4 @@
+type: object
+properties:
+  most_recent_seen:
+    type: integer

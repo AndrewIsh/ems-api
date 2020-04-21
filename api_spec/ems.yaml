@@ -403,6 +403,61 @@ paths:
           description: Query / Label combination not found
         '500':
           description: Server error
+  /queries/{query_id}/user/{user_id}:
+    post:
+      summary: Create a new queryuser relationship
+      operationId: createQueryUser
+      parameters:
+        - name: query_id
+          in: path
+          description: Query ID
+          required: true
+          schema:
+            type: integer
+        - name: user_id
+          in: path
+          description: User ID
+          required: true
+          schema:
+            type: integer
+      responses:
+        '201':
+          description: The created queryuser object
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas/queryuser.yaml'
+        '500':
+          description: Server error
+    put:
+      summary: Update a queryuser relationship
+      operationId: updateQueryUser
+      parameters:
+        - name: query_id
+          in: path
+          description: Query ID
+          required: true
+          schema:
+            type: integer
+        - name: user_id
+          in: path
+          description: User ID
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        $ref: '#/components/requestBodies/QueryUserPutBody'
+      responses:
+        '200':
+          description: Successful update
+          content:
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: Query / User combination not found
+        '500':
+          description: Server error
 
 components:
   requestBodies:
@@ -441,3 +496,17 @@ components:
         application/json:
           schema:
             $ref: 'schemas/querylabel.yaml'
+    QueryUserBody:
+      description: A JSON object describing a queryuser relationship
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: 'schemas/queryuser.yaml'
+    QueryUserPutBody:
+      description: A JSON object containing a QueryUser request body
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: 'schemas/queryuserput.yaml'
