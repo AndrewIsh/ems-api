@@ -350,6 +350,59 @@ paths:
           description: Label not found
         '500':
           description: Server error
+  /queries/{query_id}/label/{label_id}:
+    post:
+      summary: Create a new querylabel relationship
+      operationId: createQueryLabel
+      parameters:
+        - name: query_id
+          in: path
+          description: Query ID
+          required: true
+          schema:
+            type: integer
+        - name: label_id
+          in: path
+          description: Label ID
+          required: true
+          schema:
+            type: integer
+      responses:
+        '201':
+          description: The created querylabel object
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas/querylabel.yaml'
+        '500':
+          description: Server error
+    delete:
+      summary: Delete a querylabel relationship
+      operationId: deleteQueryLabel
+      parameters:
+        - name: query_id
+          in: path
+          description: Query ID
+          required: true
+          schema:
+            type: integer
+        - name: label_id
+          in: path
+          description: Label ID
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Successful deletion
+          content:
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: Query / Label combination not found
+        '500':
+          description: Server error
 
 components:
   requestBodies:
@@ -381,3 +434,10 @@ components:
         application/json:
           schema:
             $ref: 'schemas/label.yaml'
+    QueryLabelBody:
+      description: A JSON object describing a querylabel relationship
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: 'schemas/querylabel.yaml'

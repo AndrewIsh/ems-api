@@ -1,0 +1,12 @@
+type: object
+properties:
+  query_id:
+    type: integer
+  label_id:
+    type: integer
+  created_at:
+    type: string
+    nullable: true
+  updated_at:
+    type: string
+    nullable: true
