@@ -120,6 +120,12 @@ paths:
       summary: Returns all messages
       operationId: getMessages
       parameters:
+        - name: query_id
+          in: query
+          required: false
+          description: Query filter - only return messages for this query
+          schema:
+            type: integer
         - name: offset
           in: query
           required: false
