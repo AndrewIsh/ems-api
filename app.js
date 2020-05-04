@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 const express = require('express');
+const cors = require('cors');
 const bodyParser = require('body-parser');
 const helmet = require('helmet');
 const logger = require('morgan');
@@ -30,6 +31,7 @@ module.exports = {
         );
 
         // Middleware
+        app.use(cors());
         app.use(helmet());
         app.use(bodyParser.json());
         app.use(logger('combined', { stream: accessLogStream }));
