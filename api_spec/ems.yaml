@@ -464,6 +464,108 @@ paths:
           description: Query / User combination not found
         '500':
           description: Server error
+  /users:
+    get:
+      summary: Returns all users
+      operationId: getUsers
+      parameters:
+        - name: user_ids
+          in: query
+          required: false
+          description: An underscore delimited string of user IDs to apply as a filter
+          schema:
+            type: string
+      responses:
+        '200':
+          description: An array of user objects
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas/users.yaml'
+        '500':
+          description: Server error
+    post:
+      summary: Create a new user
+      operationId: createUser
+      requestBody:
+        $ref: '#/components/requestBodies/UserBody'
+      responses:
+        '201':
+          description: The created user object
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas/user.yaml'
+        '404':
+          description: User not found
+        '500':
+          description: Server error
+  /users/{id}:
+    get:
+      summary: Returns specific user
+      operationId: getUserById
+      parameters:
+        - name: id
+          in: path
+          description: User ID
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: A single user object
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas/user.yaml'
+        '404':
+          description: User not found
+        '500':
+          description: Server error
+    put:
+      summary: Update an existing user
+      operationId: updateUser
+      parameters:
+        - name: id
+          in: path
+          description: User ID
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        $ref: '#/components/requestBodies/UserBody'
+      responses:
+        '200':
+          description: The updated user object
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas/user.yaml'
+        '404':
+          description: User not found
+        '500':
+          description: Server error
+    delete:
+      summary: Delete a user
+      operationId: deleteUser
+      parameters:
+        - name: id
+          in: path
+          description: User ID
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Successful deletion
+          content:
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: Folder not found
+        '500':
+          description: Server error
 
 components:
   requestBodies:
@@ -516,3 +618,10 @@ components:
         application/json:
           schema:
             $ref: 'schemas/queryuserput.yaml'
+    UserBody:
+      description: A JSON object describing a user
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: 'schemas/user.yaml'
