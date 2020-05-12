@@ -5,7 +5,8 @@ const {
     messageRouter,
     folderRouter,
     labelRouter,
-    userRouter
+    userRouter,
+    roleRouter
 } = require('./routes');
 
 router.use('/queries', queryRouter);
@@ -13,5 +14,6 @@ router.use('/messages', messageRouter);
 router.use('/folders', folderRouter);
 router.use('/labels', labelRouter);
 router.use('/users', userRouter);
+router.use('/roles', roleRouter);
 
 module.exports = router;

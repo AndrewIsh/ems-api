@@ -566,6 +566,19 @@ paths:
           description: Folder not found
         '500':
           description: Server error
+  /roles:
+    get:
+      summary: Returns all roles
+      operationId: getRoles
+      responses:
+        '200':
+          description: An array of roles objects
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas/roles.yaml'
+        '500':
+          description: Server error
 
 components:
   requestBodies:
