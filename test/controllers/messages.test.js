@@ -31,19 +31,30 @@ jest.mock('../../../ems-db', () => ({
                     return resolve(passed);
                 });
             })
+        },
+        queries: {
+            // A mock DB resolver that returns a promise that resolves
+            // to whatever it was passed
+            initiator: jest.fn((passed) => {
+                return new Promise((resolve) => {
+                    return resolve(passed);
+                });
+            })
         }
     }
 }));
 
 describe('Messages', () => {
     describe('getMessages', () => {
-        // res.json is used, so we should mock that
-        const res = { json: jest.fn() };
+        // res.json, res.status, res.send are used, so we should mock that
+        const res = { json: jest.fn(), status: jest.fn(), send: jest.fn() };
         // Mock next so we can check it has been called
         const next = jest.fn();
 
         // Make the call
-        messages.getMessages({}, res, next);
+        messages.getMessages(
+            { rows: [{ ...mockResult, creator_id: 1 }] }
+        , res, next);
 
         it('should call the DB resolver', (done) => {
             expect(db.resolvers.messages.allMessages).toHaveBeenCalled();
@@ -152,7 +163,7 @@ describe('Messages', () => {
             expect(res.json).toBeCalled();
             done();
         });
-        it('rowCount === 0 should call status(), passing 204', (done) => {
+        it('rowCount === 0 should call status(), passing 404', (done) => {
             expect(res.status).toBeCalledWith(404);
             done();
         });
