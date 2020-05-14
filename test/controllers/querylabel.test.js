@@ -13,16 +13,28 @@ jest.mock('../../../ems-db', () => ({
             // A mock DB resolver that returns a promise that resolves
             // to whatever it was passed
             addLabelToQuery: jest.fn((passed) => {
-                return new Promise((resolve) => {
-                    return resolve(passed);
-                });
+                if (passed) {
+                    return new Promise((resolve) => {
+                        return resolve(passed);
+                    });
+                } else {
+                    return new Promise((resolve, reject) => {
+                        return reject(new Error('Rejected'));
+                    });
+                }
             }),
             // A mock DB resolver that returns a promise that resolves
             // to whatever it was passed
             removeLabelFromQuery: jest.fn((passed) => {
-                return new Promise((resolve) => {
-                    return resolve(passed);
-                });
+                if (passed) {
+                    return new Promise((resolve) => {
+                        return resolve(passed);
+                    });
+                } else {
+                    return new Promise((resolve, reject) => {
+                        return reject(new Error('Rejected'));
+                    });
+                }
             })
         }
     }
@@ -98,6 +110,13 @@ describe('QueryLabels', () => {
             expect(next).toHaveBeenCalled();
             done();
         });
+
+        // Make the failed call
+        querylabel.addLabelToQuery(false, res, next);
+        it('should call next() from the catch passing the error', (done) => {
+            expect(next).toHaveBeenCalledWith(new Error('Rejected'));
+            done();
+        });
     });
 
     describe('removeLabelFromQuery', () => {
@@ -165,6 +184,13 @@ describe('QueryLabels', () => {
         });
         it('rowCount > 1 should call next()', (done) => {
             expect(next).toHaveBeenCalled();
+            done();
+        });
+
+        // Make the failed call
+        querylabel.removeLabelFromQuery(false, res, next);
+        it('should call next() from the catch passing the error', (done) => {
+            expect(next).toHaveBeenCalledWith(new Error('Rejected'));
             done();
         });
     });

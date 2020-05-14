@@ -13,9 +13,15 @@ jest.mock('../../../ems-db', () => ({
             // A mock DB resolver that returns a promise that resolves
             // to whatever it was passed
             allLabels: jest.fn((passed) => {
-                return new Promise((resolve) => {
-                    return resolve(passed);
-                });
+                if (passed) {
+                    return new Promise((resolve) => {
+                        return resolve(passed);
+                    });
+                } else {
+                    return new Promise((resolve, reject) => {
+                        return reject(new Error('Rejected'));
+                    });
+                }
             }),
             // A mock DB resolver that returns a promise that resolves
             // to whatever it was passed
@@ -27,9 +33,15 @@ jest.mock('../../../ems-db', () => ({
             // A mock DB resolver that returns a promise that resolves
             // to whatever it was passed
             deleteLabel: jest.fn((passed) => {
-                return new Promise((resolve) => {
-                    return resolve(passed);
-                });
+                if (passed) {
+                    return new Promise((resolve) => {
+                        return resolve(passed);
+                    });
+                } else {
+                    return new Promise((resolve, reject) => {
+                        return reject(new Error('Rejected'));
+                    });
+                }
             })
         }
     }
@@ -55,6 +67,13 @@ describe('Labels', () => {
         });
         it('should call next()', (done) => {
             expect(next).toHaveBeenCalled();
+            done();
+        });
+
+        // Make the failed call
+        labels.getLabels(false, res, next);
+        it('should call next() from the catch passing the error', (done) => {
+            expect(next).toHaveBeenCalledWith(new Error('Rejected'));
             done();
         });
     });
@@ -176,6 +195,13 @@ describe('Labels', () => {
         });
         it('rowCount > 1 should call next()', (done) => {
             expect(next).toBeCalled();
+            done();
+        });
+
+        // Make the failure call
+        labels.deleteLabel(false, res, next);
+        it('should call next() from the catch passing the error', (done) => {
+            expect(next).toHaveBeenCalledWith(new Error('Rejected'));
             done();
         });
     });

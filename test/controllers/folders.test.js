@@ -13,9 +13,15 @@ jest.mock('../../../ems-db', () => ({
             // A mock DB resolver that returns a promise that resolves
             // to whatever it was passed
             allFolders: jest.fn((passed) => {
-                return new Promise((resolve) => {
-                    return resolve(passed);
-                });
+                if (passed) {
+                    return new Promise((resolve) => {
+                        return resolve(passed);
+                    });
+                } else {
+                    return new Promise((resolve, reject) => {
+                        return reject(new Error('Rejected'));
+                    });
+                }
             }),
             // A mock DB resolver that returns a promise that resolves
             // to whatever it was passed
@@ -27,9 +33,15 @@ jest.mock('../../../ems-db', () => ({
             // A mock DB resolver that returns a promise that resolves
             // to whatever it was passed
             deleteFolder: jest.fn((passed) => {
-                return new Promise((resolve) => {
-                    return resolve(passed);
-                });
+                if (passed) {
+                    return new Promise((resolve) => {
+                        return resolve(passed);
+                    });
+                } else {
+                    return new Promise((resolve, reject) => {
+                        return reject(new Error('Rejected'));
+                    });
+                }
             })
         }
     }
@@ -42,9 +54,8 @@ describe('Folders', () => {
         // Mock next so we can check it has been called
         const next = jest.fn();
 
-        // Make the call
-        folders.getFolders({}, res, next);
-
+        // Make the successful call
+        folders.getFolders(true, res, next);
         it('should call the DB resolver', (done) => {
             expect(db.resolvers.folders.allFolders).toHaveBeenCalled();
             done();
@@ -55,6 +66,13 @@ describe('Folders', () => {
         });
         it('should call next()', (done) => {
             expect(next).toHaveBeenCalled();
+            done();
+        });
+
+        // Make the failed call
+        folders.getFolders(false, res, next);
+        it('should call next() from the catch passing the error', (done) => {
+            expect(next).toHaveBeenCalledWith(new Error('Rejected'));
             done();
         });
     });
@@ -176,6 +194,13 @@ describe('Folders', () => {
         });
         it('rowCount > 1 should call next()', (done) => {
             expect(next).toBeCalled();
+            done();
+        });
+
+        // Make the failure call
+        folders.deleteFolder(false, res, next);
+        it('should call next() from the catch passing the error', (done) => {
+            expect(next).toHaveBeenCalledWith(new Error('Rejected'));
             done();
         });
     });

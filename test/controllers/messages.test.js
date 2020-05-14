@@ -13,9 +13,15 @@ jest.mock('../../../ems-db', () => ({
             // A mock DB resolver that returns a promise that resolves
             // to whatever it was passed
             allMessages: jest.fn((passed) => {
-                return new Promise((resolve) => {
-                    return resolve(passed);
-                });
+                if (passed) {
+                    return new Promise((resolve) => {
+                        return resolve(passed);
+                    });
+                } else {
+                    return new Promise((resolve, reject) => {
+                        return reject(new Error('Rejected'));
+                    });
+                }
             }),
             // A mock DB resolver that returns a promise that resolves
             // to whatever it was passed
@@ -27,9 +33,15 @@ jest.mock('../../../ems-db', () => ({
             // A mock DB resolver that returns a promise that resolves
             // to whatever it was passed
             deleteMessage: jest.fn((passed) => {
-                return new Promise((resolve) => {
-                    return resolve(passed);
-                });
+                if (passed) {
+                    return new Promise((resolve) => {
+                        return resolve(passed);
+                    });
+                } else {
+                    return new Promise((resolve, reject) => {
+                        return reject(new Error('Rejected'));
+                    });
+                }
             })
         },
         queries: {
@@ -66,6 +78,15 @@ describe('Messages', () => {
         });
         it('should call next()', (done) => {
             expect(next).toHaveBeenCalled();
+            done();
+        });
+
+        // Make the failed call
+        messages.getMessages(false, res, next);
+        it('should call next() from the catch passing the error', (done) => {
+            expect(res.status).toHaveBeenCalledWith(500);
+            expect(res.send).toHaveBeenCalled();
+            expect(next).toHaveBeenCalledWith();
             done();
         });
     });
@@ -187,6 +208,13 @@ describe('Messages', () => {
         });
         it('rowCount > 1 should call next()', (done) => {
             expect(next).toBeCalled();
+            done();
+        });
+
+        // Make the failure call
+        messages.deleteMessage(false, res, next);
+        it('should call next() from the catch passing the error', (done) => {
+            expect(next).toHaveBeenCalledWith(new Error('Rejected'));
             done();
         });
     });

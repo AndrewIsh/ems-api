@@ -13,14 +13,26 @@ jest.mock('../../../ems-db', () => ({
             // A mock DB resolver that returns a promise that resolves
             // to whatever it was passed
             allUsers: jest.fn((passed) => {
-                return new Promise((resolve) => {
-                    return resolve(passed);
-                });
+                if (passed) {
+                    return new Promise((resolve) => {
+                        return resolve(passed);
+                    });
+                } else {
+                    return new Promise((resolve, reject) => {
+                        return reject(new Error('Rejected'));
+                    });
+                }
             }),
             getUser: jest.fn((passed) => {
-                return new Promise((resolve) => {
-                    return resolve(passed);
-                });
+                if (passed) {
+                    return new Promise((resolve) => {
+                        return resolve(passed);
+                    });
+                } else {
+                    return new Promise((resolve, reject) => {
+                        return reject(new Error('Rejected'));
+                    });
+                }
             }),
             // A mock DB resolver that returns a promise that resolves
             // to whatever it was passed
@@ -39,9 +51,15 @@ jest.mock('../../../ems-db', () => ({
             // A mock DB resolver that returns a promise that resolves
             // to whatever it was passed
             deleteUser: jest.fn((passed) => {
-                return new Promise((resolve) => {
-                    return resolve(passed);
-                });
+                if (passed) {
+                    return new Promise((resolve) => {
+                        return resolve(passed);
+                    });
+                } else {
+                    return new Promise((resolve, reject) => {
+                        return reject(new Error('Rejected'));
+                    });
+                }
             })
         }
     }
@@ -67,6 +85,13 @@ describe('users', () => {
         });
         it('should call next()', (done) => {
             expect(next).toHaveBeenCalled();
+            done();
+        });
+
+        // Make the failed call
+        users.getUsers(false, res, next);
+        it('should call next() from the catch passing the error', (done) => {
+            expect(next).toHaveBeenCalledWith(new Error('Rejected'));
             done();
         });
     });
@@ -127,6 +152,13 @@ describe('users', () => {
         });
         it('rowCount > 1 should call next()', (done) => {
             expect(next).toHaveBeenCalled();
+            done();
+        });
+
+        // Make the failed call
+        users.getUser(false, res, next);
+        it('should call next() from the catch passing the error', (done) => {
+            expect(next).toHaveBeenCalledWith(new Error('Rejected'));
             done();
         });
     });
@@ -249,6 +281,13 @@ describe('users', () => {
         });
         it('rowCount > 1 should call next()', (done) => {
             expect(next).toBeCalled();
+            done();
+        });
+
+        // Make the failed call
+        users.deleteUser(false, res, next);
+        it('should call next() from the catch passing the error', (done) => {
+            expect(next).toHaveBeenCalledWith(new Error('Rejected'));
             done();
         });
     });
