@@ -5,15 +5,15 @@ const messages = {
         try {
             // Wait for both the messages query and initiator
             // query to complete, so we can form our response
-            const returned = await Promise.all([
+            const [messages, initiator ] = await Promise.all([
                 db.resolvers.messages
                     .allMessages(req),
                 db.resolvers.queries
                     .initiator(req)
             ]);
             const response = {
-                messages: returned[0].rows,
-                initiator: returned[1].rows[0].creator_id
+                messages: messages.rows,
+                initiator: initiator.rows.length > 0 ? initiator.rows[0].creator_id : null
             };
             res.status(200);
             res.json(response);
