@@ -47,7 +47,7 @@ jest.mock('../../../ems-db', () => ({
         queries: {
             // A mock DB resolver that returns a promise that resolves
             // to whatever it was passed
-            initiator: jest.fn((passed) => {
+            participants: jest.fn((passed) => {
                 return new Promise((resolve) => {
                     return resolve(passed);
                 });

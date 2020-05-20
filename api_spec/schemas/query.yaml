@@ -8,6 +8,19 @@ properties:
   folder_id:
     type: integer
     nullable: true
+  initiator:
+    type: integer
+    nullable: true
+  latestMessage:
+    type: object
+    items:
+      $ref: 'message.yaml'
+    nullable: true
+  participants:
+    type: array
+    items:
+      type: integer
+    nullable: false
   created_at:
     type: string
     nullable: true

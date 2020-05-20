@@ -1,10 +1,3 @@
-type: object
-properties:
-  initiator:
-    type: integer
-    nullable: true
-  messages:
-    type: array
-    items:
-      $ref: 'message.yaml'
-    nullable: false
+type: array
+items:
+  $ref: 'message.yaml'

@@ -16,3 +16,6 @@ properties:
   updated_at:
     type: string
     nullable: true
+  filename:
+    type: string
+    nullable: true

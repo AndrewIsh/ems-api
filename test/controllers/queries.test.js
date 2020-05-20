@@ -55,6 +55,44 @@ jest.mock('../../../ems-db', () => ({
                         return reject(new Error('Rejected'));
                     });
                 }
+            }),
+            // A mock DB resolver for initiators that returns a mock initiator
+            initiators: jest.fn((passed, shouldHaveInitiator) => {
+                if (passed) {
+                    return new Promise((resolve) => {
+                        return resolve({ rows: [{ id: 1, initiator: 1 }] });
+                    });
+                } else {
+                    return new Promise((resolve, reject) => {
+                        return reject(new Error('Rejected'));
+                    });
+                }
+            }),
+            // A mock DB resolver for participants that returns a mock
+            // participant
+            participants: jest.fn((passed) => {
+                if (passed) {
+                    return new Promise((resolve) => {
+                        return resolve({ rows: [{ query_id: 1, creator_id: 1 }] });
+                    });
+                } else {
+                    return new Promise((resolve, reject) => {
+                        return reject(new Error('Rejected'));
+                    });
+                }
+            }),
+            // A mock DB resolver for participants that returns a mock
+            // message object
+            latestMessages: jest.fn((passed) => {
+                if (passed) {
+                    return new Promise((resolve) => {
+                        return resolve({ rows: [{ query_id: 1 }] });
+                    });
+                } else {
+                    return new Promise((resolve, reject) => {
+                        return reject(new Error('Rejected'));
+                    });
+                }
             })
         }
     }
@@ -66,16 +104,37 @@ describe('Queries', () => {
         const res = { json: jest.fn() };
         // Mock next so we can check it has been called
         const next = jest.fn();
+        // Our expected response
+        const response = [
+            {
+                id: 1,
+                initiator: 1,
+                participants: [1],
+                latestMessage: { query_id: 1 }
+            }
+        ];
 
         // Make the call
-        queries.getQueries({}, res, next);
+        queries.getQueries({ rows: [{ id: 1 }] }, res, next);
 
         it('should call the DB resolver', (done) => {
             expect(db.resolvers.queries.allQueries).toHaveBeenCalled();
             done();
         });
-        it('should call res.json', (done) => {
-            expect(res.json).toHaveBeenCalled();
+        it('should call the initiators resolver', (done) => {
+            expect(db.resolvers.queries.initiators).toHaveBeenCalled();
+            done();
+        });
+        it('should call the participants resolver', (done) => {
+            expect(db.resolvers.queries.participants).toHaveBeenCalled();
+            done();
+        });
+        it('should call the latest resolver', (done) => {
+            expect(db.resolvers.queries.latestMessages).toHaveBeenCalled();
+            done();
+        });
+        it('should call res.json with the correct response', (done) => {
+            expect(res.json).toHaveBeenCalledWith(response);
             done();
         });
         it('should call next()', (done) => {
