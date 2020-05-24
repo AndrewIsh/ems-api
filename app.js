@@ -15,13 +15,6 @@ module.exports = {
     init: async () => {
         const app = express();
 
-        // Install the OpenAPI validator
-        await new OpenApiValidator({
-            apiSpec: './api_spec/ems.yaml',
-            validateRequests: true,
-            validateResponses: true
-        }).install(app);
-
         // Set up logging
         const accessLogStream = fs.createWriteStream(
             path.join(process.env.LOG_FILE),
@@ -35,6 +28,13 @@ module.exports = {
         app.use(helmet());
         app.use(bodyParser.json());
         app.use(logger('combined', { stream: accessLogStream }));
+
+        // Install the OpenAPI validator
+        await new OpenApiValidator({
+            apiSpec: './api_spec/ems.yaml',
+            validateRequests: true,
+            validateResponses: true
+        }).install(app);
 
         // API route
         app.use('/api', apiRouter);
