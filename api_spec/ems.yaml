@@ -37,14 +37,19 @@ paths:
       summary: Create a new query
       operationId: createQuery
       requestBody:
-        $ref: '#/components/requestBodies/QueryBody'
+        description: A JSON object describing a query
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas/queryrequest.yaml'
       responses:
         '201':
           description: The created query object
           content:
             application/json:
               schema:
-                $ref: 'schemas/query.yaml'
+                $ref: 'schemas/queryresponse.yaml'
         '404':
           description: Query not found
         '500':
@@ -66,7 +71,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas/query.yaml'
+                $ref: 'schemas/queryresponse.yaml'
         '404':
           description: Query not found
         '500':
@@ -82,14 +87,19 @@ paths:
           schema:
             type: integer
       requestBody:
-        $ref: '#/components/requestBodies/QueryBody'
+        description: A JSON object describing a query
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas/queryrequest.yaml'
       responses:
         '200':
           description: The updated query object
           content:
             application/json:
               schema:
-                $ref: 'schemas/query.yaml'
+                $ref: 'schemas/queryresponse.yaml'
         '404':
           description: Query not found
         '500':
@@ -582,13 +592,24 @@ paths:
 
 components:
   requestBodies:
+    # Long explanation incoming...
+    # We need the definitions for query request and response bodies to
+    # be different (since not all properties are passed in the request)
+    # So we want two different schema files. However, switching the QueryBody
+    # definition to the reduced schema causes the validator to explode
+    # in the most bizarre way. The only way I've found to do it is to
+    # stop using the QueryBody definition below (but not removing it,
+    # because that causes the validator to explode also...) and directly
+    # reference the schema in the route definition above. It makes no
+    # sense whatsoever but I've spent far too long trying to get it
+    # to work the way it should
     QueryBody:
       description: A JSON object describing a query
       required: true
       content:
         application/json:
           schema:
-            $ref: 'schemas/query.yaml'
+            $ref: 'schemas/queryresponse.yaml'
     MessageBody:
       description: A JSON object describing a message
       required: true

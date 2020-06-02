@@ -15,6 +15,7 @@ const messages = {
                 next();
             }),
     upsertMessage: (req, res, next) =>
+        // TODO: Ensure the message being edited belongs to the user
         db.resolvers.messages
             .upsertMessage(req)
             .then((result) => {
@@ -30,6 +31,7 @@ const messages = {
             })
             .catch((err) => next(err)),
     deleteMessage: (req, res, next) =>
+        // TODO: Ensure the message being deleted belongs to the user
         db.resolvers.messages
             .deleteMessage(req)
             .then((result) => {
