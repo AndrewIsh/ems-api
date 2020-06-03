@@ -154,6 +154,13 @@ describe('Queries', () => {
         const res = { json: jest.fn(), send: jest.fn(), status: jest.fn() };
         // Mock next so we can check it has been called
         const next = jest.fn();
+        // Our expected response
+        const response = {
+            id: 1,
+            initiator: 1,
+            participants: [1],
+            latestMessage: { query_id: 1 }
+        };
 
         // Make the === 0 (else) call
         // Here we're telling our mocked getQuery DB resolver above to
@@ -180,10 +187,10 @@ describe('Queries', () => {
         // Make the === 1 call
         // Here we're telling our mocked getQuery DB resolver above to
         // pretend it's returning 1 result
-        queries.getQuery({ rowCount: 1, rows: [mockResult] }, res, next);
+        queries.getQuery({ rowCount: 1, rows: [{id: 1}] }, res, next);
 
         it('rowCount === 1 should call json(), passing the result', (done) => {
-            expect(res.json).toBeCalledWith(mockResult);
+            expect(res.json).toBeCalledWith(response);
             done();
         });
         it('rowCount === 1 should call next()', (done) => {
