@@ -24,6 +24,12 @@ paths:
           description: The number of records to return
           schema:
             type: integer
+        - name: title
+          in: query
+          required: false
+          description: A search string to filter on title
+          schema:
+            type: string
       responses:
         '200':
           description: An array of query objects

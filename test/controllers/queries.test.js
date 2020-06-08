@@ -114,6 +114,8 @@ describe('Queries', () => {
             }
         ];
 
+        const emptyResponse = [];
+
         // Make the call
         queries.getQueries({ rows: [{ id: 1 }] }, res, next);
 
@@ -146,6 +148,13 @@ describe('Queries', () => {
         queries.getQueries(false, res, next);
         it('should call next() from the catch passing the error', (done) => {
             expect(next).toHaveBeenCalledWith(new Error('Rejected'));
+            done();
+        });
+
+        // Make a call that results in no queries
+        queries.getQueries({ rows: [] }, res, next);
+        it('a call that returns no queries should return an empty array', (done) => {
+            expect(res.json).toHaveBeenCalledWith(emptyResponse);
             done();
         });
     });

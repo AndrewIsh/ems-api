@@ -3,6 +3,10 @@ const db = require('../../ems-db');
 const addEmbeds = async (queries) => {
     // We need the IDs of all queries we received
     const query_ids = queries.rows.map(query => query.id);
+    // Don't proceed if we don't need to
+    if (query_ids.length === 0) {
+        return [];    
+    }
     // Now get the initiators for all the queries we've
     // received, we also receive their associated query ID
     const initiators = await db.resolvers.queries.initiators(
