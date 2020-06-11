@@ -4,6 +4,7 @@ const folderRouter = require('./folders');
 const labelRouter = require('./labels');
 const userRouter = require('./users');
 const roleRouter = require('./roles');
+const uploadRouter = require('./uploads');
 
 module.exports = {
     queryRouter,
@@ -11,5 +12,6 @@ module.exports = {
     folderRouter,
     labelRouter,
     userRouter,
-    roleRouter
+    roleRouter,
+    uploadRouter
 };

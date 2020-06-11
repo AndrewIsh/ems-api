@@ -595,6 +595,35 @@ paths:
                 $ref: 'schemas/roles.yaml'
         '500':
           description: Server error
+  /upload:
+    post:
+      summary: Upload one or more files
+      operationId: uploadFiles
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                userfile:
+                  type: string
+                  format: binary
+                userfiles[]:
+                  type: array
+                  minItems: 1
+                  items:
+                    type: string
+                    format: binary
+      responses:
+        '200':
+          description: A message response
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas/message.yaml'
+        '500':
+          description: Server error
 
 components:
   requestBodies:

@@ -1,10 +1,13 @@
 // The thing we're testing
 const messages = require('../../controllers/messages');
 
-// The DB module that messages.js depends on (which we're about to mock)
+// The DB modules that messages.js depends on (which we're about to mock)
+const fs = require('fs');
 const db = require('../../../ems-db');
 
 const mockResult = { one: 'one' };
+
+jest.mock('fs');
 
 // Mock ems-db
 jest.mock('../../../ems-db', () => ({
@@ -25,10 +28,29 @@ jest.mock('../../../ems-db', () => ({
             }),
             // A mock DB resolver that returns a promise that resolves
             // to whatever it was passed
+            getMessage: jest.fn((passed) => {
+                if (passed) {
+                    return new Promise((resolve) => {
+                        return resolve(passed);
+                    });
+                } else {
+                    return new Promise((resolve, reject) => {
+                        return reject(new Error('Rejected'));
+                    });
+                }
+            }),
+            // A mock DB resolver that returns a promise that resolves
+            // to whatever it was passed
             upsertMessage: jest.fn((passed) => {
-                return new Promise((resolve) => {
-                    return resolve(passed);
-                });
+                if (passed) {
+                    return new Promise((resolve) => {
+                        return resolve(passed);
+                    });
+                } else {
+                    return new Promise((resolve, reject) => {
+                        return reject(new Error('Rejected'));
+                    });
+                }
             }),
             // A mock DB resolver that returns a promise that resolves
             // to whatever it was passed
@@ -99,7 +121,7 @@ describe('Messages', () => {
         // Make the === 0 call
         // Here we're telling our mocked upsertMessage DB resolver above to
         // pretend it's not inserted/updated a message
-        messages.upsertMessage({ rowCount: 0 }, res, next);
+        messages.upsertMessage({ rowCount: 0 , rows: []}, res, next);
 
         it('should call the DB resolver', (done) => {
             expect(db.resolvers.messages.upsertMessage).toHaveBeenCalled();
@@ -122,7 +144,7 @@ describe('Messages', () => {
         // Here we're telling our mocked upsertMessage DB resolver above to
         // pretend it's successfully inserted/updated a message
         // POST:
-        messages.upsertMessage({ rowCount: 1, method: 'POST' }, res, next);
+        messages.upsertMessage({ rowCount: 1, rows: [mockResult], method: 'POST' }, res, next);
 
         it('rowCount > 0 & method === POST should call status(), passing 201', (done) => {
             expect(res.status).toBeCalledWith(201);
@@ -145,6 +167,13 @@ describe('Messages', () => {
             expect(next).toHaveBeenCalled();
             done();
         });
+
+        // Make the failed call
+        messages.upsertMessage(false, res, next);
+        it('should call next() from the catch passing the error', (done) => {
+            expect(next).toHaveBeenCalledWith();
+            done();
+        });
     });
 
     describe('deleteMessage', () => {
@@ -156,7 +185,7 @@ describe('Messages', () => {
         // Make the === 0 call
         // Here we're telling our mocked deleteMessage DB resolver above to
         // pretend it's not deleted a message
-        messages.deleteMessage({ rowCount: 0 }, res, next);
+        messages.deleteMessage({ rowCount: 0, rows: [] }, res, next);
 
         it('should call the DB resolver', (done) => {
             expect(db.resolvers.messages.deleteMessage).toHaveBeenCalled();
@@ -178,7 +207,7 @@ describe('Messages', () => {
         // Make the === 1 call
         // Here we're telling our mocked deleteMessage DB resolver above to
         // pretend it has deleted a message
-        messages.deleteMessage({ rowCount: 1 }, res, next);
+        messages.deleteMessage({ rowCount: 1, rows: [mockResult] }, res, next);
 
         it('rowCount > 0 should call json()', (done) => {
             expect(res.json).toBeCalled();
@@ -193,10 +222,32 @@ describe('Messages', () => {
             done();
         });
 
+        // Make the === 1 call with an attachment
+        // Here we're telling our mocked deleteMessage DB resolver above to
+        // pretend it has deleted a message with an attachment
+        messages.deleteMessage({ rowCount: 1, rows: [{filename: 'myfile.txt'}] }, res, next);
+
+        it('rowCount > 0 should call json()', (done) => {
+            expect(res.json).toBeCalled();
+            done();
+        });
+        it('rowCount === 0 should call status(), passing 404', (done) => {
+            expect(res.status).toBeCalledWith(404);
+            done();
+        });
+        it('rowCount > 0 should call next()', (done) => {
+            expect(next).toBeCalled();
+            done();
+        });
+        it('rowCount === 1 with file attachment should call fs.unlinkSync()', (done) => {
+            expect(fs.unlinkSync).toBeCalled();
+            done();
+        });
+
         // Make the > 1 call
         // Here we're telling our mocked deleteMessage DB resolver above to
         // pretend it has deleted more than one message, this should not happen
-        messages.deleteMessage({ rowCount: 2 }, res, next);
+        messages.deleteMessage({ rowCount: 2, rows: [] }, res, next);
 
         it('rowCount > 1 should call status() passing 500', (done) => {
             expect(res.status).toBeCalledWith(500);
