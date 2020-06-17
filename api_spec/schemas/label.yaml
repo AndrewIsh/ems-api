@@ -5,6 +5,8 @@ properties:
     nullable: true
   name:
     type: string
+  count:
+    type: integer
   created_at:
     type: string
     nullable: true

@@ -30,6 +30,18 @@ paths:
           description: A search string to filter on title
           schema:
             type: string
+        - name: folder
+          in: query
+          required: false
+          description: A folder code to filter on
+          schema:
+            type: string
+        - name: label
+          in: query
+          required: false
+          description: A label id to filter on
+          schema:
+            type: integer
       responses:
         '200':
           description: An array of query objects

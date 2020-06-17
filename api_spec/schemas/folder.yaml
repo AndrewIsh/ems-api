@@ -5,6 +5,12 @@ properties:
     nullable: true
   name:
     type: string
+  code:
+    type: string
+  position:
+    type: integer
+  count:
+    type: integer
   created_at:
     type: string
     nullable: true
