@@ -78,21 +78,23 @@ const queries = {
             next(err);
         }
     },
-    upsertQuery: (req, res, next) =>
-        db.resolvers.queries
-            .upsertQuery(req)
-            .then((result) => {
-                if (result.rowCount === 0) {
-                    res.status(404);
-                    res.send();
-                    next();
-                } else {
-                    res.status(req.method === 'POST' ? 201 : 200);
-                    res.json(result.rows[0]);
-                    next();
-                }
-            })
-            .catch((err) => next(err)),
+    upsertQuery: async (req, res, next) => {
+        try {
+            const result = await db.resolvers.queries.upsertQuery(req);
+            if (result.rowCount === 0) {
+                res.status(404);
+                res.send();
+                next();
+            } else {
+                const toSend = await addEmbeds(result);
+                res.status(req.method === 'POST' ? 201 : 200);
+                res.json(toSend[0]);
+                next();
+            }
+        } catch (err) {
+            next(err);
+        }
+    },
     deleteQuery: (req, res, next) =>
         db.resolvers.queries
             .deleteQuery(req)
