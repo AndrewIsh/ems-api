@@ -5,6 +5,7 @@ properties:
     nullable: true
   title:
     type: string
-  folder_id:
-    type: integer
+    nullable: true
+  folder:
+    type: string
     nullable: true

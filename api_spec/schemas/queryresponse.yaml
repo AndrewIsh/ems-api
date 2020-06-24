@@ -5,8 +5,8 @@ properties:
     nullable: true
   title:
     type: string
-  folder_id:
-    type: integer
+  folder:
+    type: string
     nullable: true
   initiator:
     type: integer
