@@ -4,7 +4,16 @@ const queries = require('../../controllers/queries');
 // The DB module that queries.js depends on (which we're about to mock)
 const db = require('../../../ems-db');
 
-const mockResult = { one: 'one' };
+const mockResult = {
+    id: 1,
+    initiator: 1,
+    latestMessage: {
+        query_id: 1
+    },
+    participants: [
+        1
+    ]
+};
 
 // Mock ems-db
 jest.mock('../../../ems-db', () => ({
@@ -265,14 +274,15 @@ describe('Queries', () => {
         // Here we're telling our mocked upsertQuery DB resolver above to
         // pretend it's successfully inserted/updated a query
         // POST:
-        queries.upsertQuery({ rowCount: 1, method: 'POST' }, res, next);
+        queries.upsertQuery({ rowCount: 1, rows: [mockResult], method: 'POST' }, res, next);
 
         it('rowCount > 0 & method === POST should call status(), passing 201', (done) => {
             expect(res.status).toBeCalledWith(201);
             done();
         });
+
         queries.upsertQuery(
-            { rowCount: 1, method: 'PUT', rows: [mockResult] },
+            { rowCount: 1, rows: [mockResult], method: 'PUT' },
             res,
             next
         );
