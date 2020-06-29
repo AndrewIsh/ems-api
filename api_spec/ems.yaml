@@ -55,12 +55,7 @@ paths:
       summary: Create a new query
       operationId: createQuery
       requestBody:
-        description: A JSON object describing a query
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: 'schemas/queryrequest.yaml'
+        $ref: '#/components/requestBodies/QueryBody'
       responses:
         '201':
           description: The created query object
@@ -105,12 +100,7 @@ paths:
           schema:
             type: integer
       requestBody:
-        description: A JSON object describing a query
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: 'schemas/queryrequest.yaml'
+        $ref: '#/components/requestBodies/QueryBody'
       responses:
         '200':
           description: The updated query object
@@ -651,12 +641,12 @@ components:
     # sense whatsoever but I've spent far too long trying to get it
     # to work the way it should
     QueryBody:
-      description: A JSON object describing a query
+      description: A JSON object describing a query request
       required: true
       content:
         application/json:
           schema:
-            $ref: 'schemas/queryresponse.yaml'
+            $ref: 'schemas/queryrequest.yaml'
     MessageBody:
       description: A JSON object describing a message
       required: true
