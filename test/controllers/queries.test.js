@@ -7,6 +7,7 @@ const db = require('../../../ems-db');
 const mockResult = {
     id: 1,
     initiator: 1,
+    labels: [1],
     latestMessage: {
         query_id: 1
     },
@@ -90,12 +91,25 @@ jest.mock('../../../ems-db', () => ({
                     });
                 }
             }),
-            // A mock DB resolver for participants that returns a mock
-            // message object
+            // A mock DB resolver for latest messages that returns a mock
+            // object
             latestMessages: jest.fn((passed) => {
                 if (passed) {
                     return new Promise((resolve) => {
                         return resolve({ rows: [{ query_id: 1 }] });
+                    });
+                } else {
+                    return new Promise((resolve, reject) => {
+                        return reject(new Error('Rejected'));
+                    });
+                }
+            }),
+            // A mock DB resolver for labels that returns a mock
+            // object
+            labels: jest.fn((passed) => {
+                if (passed) {
+                    return new Promise((resolve) => {
+                        return resolve({ rows: [{ query_id: 1, label_id: 1 }] });
                     });
                 } else {
                     return new Promise((resolve, reject) => {
@@ -119,6 +133,7 @@ describe('Queries', () => {
                 id: 1,
                 initiator: 1,
                 participants: [1],
+                labels: [1],
                 latestMessage: { query_id: 1 }
             }
         ];
@@ -177,6 +192,7 @@ describe('Queries', () => {
             id: 1,
             initiator: 1,
             participants: [1],
+            labels: [1],
             latestMessage: { query_id: 1 }
         };
 

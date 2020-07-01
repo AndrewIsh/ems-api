@@ -16,6 +16,10 @@ const addEmbeds = async (queries) => {
     const participants = await db.resolvers.queries.participants(
         query_ids
     );
+    // Now get the labels for all retrieved queries
+    const labels = await db.resolvers.queries.labels(
+        query_ids
+    );
     // Finally get the most recent message for each retrieved query
     const latest = await db.resolvers.queries.latestMessages(
         query_ids
@@ -30,6 +34,9 @@ const addEmbeds = async (queries) => {
         const queryParticipants = participants.rows.filter(
             participant => participant.query_id === query.id
         ).map(final => final.creator_id);
+        const queryLabels = labels.rows.filter(
+            label => label.query_id === query.id
+        ).map(final => final.label_id);
         // The most recent message for this query
         const queryLatest = latest.rows.find(
             latestMessage => latestMessage.query_id === query.id
@@ -38,7 +45,8 @@ const addEmbeds = async (queries) => {
             ...query,
             initiator: queryInitiator,
             participants: queryParticipants,
-            latestMessage: queryLatest
+            latestMessage: queryLatest,
+            labels: queryLabels
         };
     });
 };
