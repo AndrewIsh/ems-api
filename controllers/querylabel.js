@@ -1,40 +1,33 @@
 const db = require('../../ems-db');
 
+const helpers = require('../helpers/queries');
+
 const querylabel = {
-    addLabelToQuery: (req, res, next) =>
-        db.resolvers.querylabel
-            .addLabelToQuery(req)
-            .then((result) => {
-                if (result.rowCount === 1) {
-                    res.status(201);
-                    res.json(result.rows[0]);
-                    next();
-                } else {
-                    res.status(500);
-                    res.send();
-                    next();
-                }
-            })
-            .catch((err) => next(err)),
-    removeLabelFromQuery: (req, res, next) =>
-        db.resolvers.querylabel
-            .removeLabelFromQuery(req)
-            .then((result) => {
-                if (result.rowCount === 0) {
-                    res.status(404);
-                    res.send();
-                    next();
-                } else if (result.rowCount === 1) {
-                    res.status(204);
-                    res.json({});
-                    next();
-                } else {
-                    res.status(500);
-                    res.send();
-                    next();
-                }
-            })
-            .catch((err) => next(err))
+    addRemove: (req, res, next, action) => {
+        const func = db.resolvers.querylabel[action];
+        return func(req).then(async (response) => {
+            if (response.rowCount === 0) {
+                res.status(404);
+                res.send();
+                next();
+            } else if (response.rowCount === 1) {
+                // Fetch and return the updated query object
+                const queries = await db.resolvers.queries.getQuery({
+                    params: { id: req.params.query_id }
+                });
+                const toSend = await helpers.addEmbeds(queries);
+                res.status(200);
+                res.json(toSend[0]);
+                next();
+            } else {
+                res.status(500);
+                res.send();
+                next();
+            }
+        })
+        .catch((err) => next(err));
+
+    }
 };
 
 module.exports = querylabel;

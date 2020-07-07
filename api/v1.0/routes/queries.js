@@ -9,8 +9,12 @@ router.get('/:id', queries.getQuery);
 router.post('/', queries.upsertQuery);
 router.put('/:id', queries.upsertQuery);
 router.delete('/:id', queries.deleteQuery);
-router.post('/:query_id/label/:label_id', querylabel.addLabelToQuery);
-router.delete('/:query_id/label/:label_id', querylabel.removeLabelFromQuery);
+// POST and PUT use the same controller, albeit with a different 'action'
+// parameter, so we pass that here
+router.post('/:query_id/label/:label_id', (req, res, next) =>
+    querylabel.addRemove(req, res, next, 'addLabelToQuery'));
+router.delete('/:query_id/label/:label_id', (req, res, next) =>
+    querylabel.addRemove(req, res, next, 'removeLabelFromQuery'));
 router.post('/:query_id/user/:user_id', queryuser.addUserToQuery);
 router.put('/:query_id/user/:user_id', queryuser.updateMostRecentSeen);
 

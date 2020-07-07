@@ -392,12 +392,14 @@ paths:
           schema:
             type: integer
       responses:
-        '201':
-          description: The created querylabel object
+        '200':
+          description: The updated query object
           content:
             application/json:
               schema:
-                $ref: 'schemas/querylabel.yaml'
+                $ref: 'schemas/queryresponse.yaml'
+        '404':
+          description: Query / Label combination not found
         '500':
           description: Server error
     delete:
@@ -417,12 +419,12 @@ paths:
           schema:
             type: integer
       responses:
-        '204':
-          description: Successful deletion
+        '200':
+          description: The updated query object
           content:
             application/json:
               schema:
-                type: object
+                $ref: 'schemas/queryresponse.yaml'
         '404':
           description: Query / Label combination not found
         '500':
