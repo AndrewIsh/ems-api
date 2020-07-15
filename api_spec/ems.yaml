@@ -67,6 +67,20 @@ paths:
           description: Query not found
         '500':
           description: Server error
+    put:
+      summary: Update queries in bulk
+      operationId: updateQueryBulk
+      requestBody:
+        $ref: '#/components/requestBodies/QueriesBody'
+      responses:
+        '200':
+          description: An array of updated query objects
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas/queries.yaml'
+        '500':
+          description: Server error
   /queries/{id}:
     get:
       summary: Returns specific query
@@ -384,7 +398,7 @@ paths:
           description: Query ID
           required: true
           schema:
-            type: integer
+            type: string
         - name: label_id
           in: path
           description: Label ID
@@ -397,9 +411,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas/queryresponse.yaml'
-        '404':
-          description: Query / Label combination not found
+                $ref: 'schemas/queryresponses.yaml'
         '500':
           description: Server error
     delete:
@@ -411,7 +423,7 @@ paths:
           description: Query ID
           required: true
           schema:
-            type: integer
+            type: string
         - name: label_id
           in: path
           description: Label ID
@@ -424,9 +436,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas/queryresponse.yaml'
-        '404':
-          description: Query / Label combination not found
+                $ref: 'schemas/queryresponses.yaml'
         '500':
           description: Server error
   /queries/{query_id}/user/{user_id}:
@@ -631,17 +641,6 @@ paths:
 
 components:
   requestBodies:
-    # Long explanation incoming...
-    # We need the definitions for query request and response bodies to
-    # be different (since not all properties are passed in the request)
-    # So we want two different schema files. However, switching the QueryBody
-    # definition to the reduced schema causes the validator to explode
-    # in the most bizarre way. The only way I've found to do it is to
-    # stop using the QueryBody definition below (but not removing it,
-    # because that causes the validator to explode also...) and directly
-    # reference the schema in the route definition above. It makes no
-    # sense whatsoever but I've spent far too long trying to get it
-    # to work the way it should
     QueryBody:
       description: A JSON object describing a query request
       required: true
@@ -649,6 +648,13 @@ components:
         application/json:
           schema:
             $ref: 'schemas/queryrequest.yaml'
+    QueriesBody:
+      description: An array of JSON objects describing query requests
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: 'schemas/queryrequests.yaml'
     MessageBody:
       description: A JSON object describing a message
       required: true

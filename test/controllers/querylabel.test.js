@@ -47,8 +47,10 @@ jest.mock('../../../ems-db', () => ({
             }),
             // A mock DB resolver that returns a promise that resolves
             // to whatever it was passed
+            // To emulate a failed call, if the query_id 1138 is passed,
+            // we fail
             removeLabelFromQuery: jest.fn((passed) => {
-                if (passed) {
+                if (passed && passed.params.query_id !== '1138') {
                     return new Promise((resolve) => {
                         return resolve(passed);
                     });
@@ -63,160 +65,104 @@ jest.mock('../../../ems-db', () => ({
 }));
 
 describe('QueryLabels', () => {
+    beforeEach(() => {
+        jest.clearAllMocks();
+    });
     describe('addRemove (addLabelToQuery)', () => {
+        // Because querylabel.addRemove is returns a promise, we need to await it
+        // before we can test what it did.
+        beforeEach(async () => {
+            await querylabel.addRemove(
+                { rowCount: 1, params: { query_id: '1,2,3', label_id: '5' }, rows: [mockResult] },
+                res,
+                next,
+                'addLabelToQuery'
+            );
+        });
         // res.json is used, so we should mock that
         const res = { json: jest.fn(), send: jest.fn(), status: jest.fn() };
         // Mock next so we can check it has been called
         const next = jest.fn();
 
-        // Make the === 0 call
-        // Here we're telling our mocked addLabelToQuery DB resolver above to
-        // pretend it's not inserted/updated a label
-        querylabel.addRemove({ rowCount: 0 }, res, next, 'addLabelToQuery');
-
-        it('should call the DB resolver', (done) => {
-            expect(db.resolvers.querylabel.addLabelToQuery).toHaveBeenCalled();
-            done();
-        });
-        it('rowCount === 0 should call status(), passing 500', (done) => {
-            expect(res.status).toBeCalledWith(500);
-            done();
-        });
-        it('rowCount === 0 should call send()', (done) => {
-            expect(res.send).toHaveBeenCalled();
-            done();
-        });
-        it('rowCount === 0 should call next()', (done) => {
-            expect(next).toHaveBeenCalled();
+        it('should call the DB resolver 3 times', (done) => {
+            expect(
+                db.resolvers.querylabel.addLabelToQuery
+            ).toHaveBeenCalledTimes(3);
             done();
         });
 
-        // Make the == 1 call
-        // Here we're telling our mocked addLabelToQuery DB resolver above to
-        // pretend it's successfully inserted label query relationship
-        // POST:
-        querylabel.addRemove(
-            { rowCount: 1, params: { query_id: 1 }, rows: [mockResult] },
-            res,
-            next,
-            'addLabelToQuery'
-        );
-
-        it('rowCount == 1 should call status(), passing 200', (done) => {
+        it('should call status(), passing 200', (done) => {
             expect(res.status).toBeCalledWith(200);
             done();
         });
-        it('rowCount == 1 should call json()', (done) => {
+        it('should call json()', (done) => {
             expect(res.json).toHaveBeenCalled();
             done();
         });
-        it('rowCount == 1 should call next()', (done) => {
+        it('should call next()', (done) => {
             expect(next).toHaveBeenCalled();
-            done();
-        });
-
-        // Make the > 1 call
-        // Here we're telling our mocked addLabelToQuery DB resolver above to
-        // pretend it's updated > 1 rows which shouldn't ever happen
-        // POST:
-        querylabel.addRemove({ rowCount: 2 }, res, next, 'addLabelToQuery');
-
-        it('rowCount > 1 should call status(), passing 500', (done) => {
-            expect(res.status).toBeCalledWith(500);
-            done();
-        });
-        it('rowCount > 1 should call send()', (done) => {
-            expect(res.send).toHaveBeenCalled();
-            done();
-        });
-        it('rowCount > 1 should call next()', (done) => {
-            expect(next).toHaveBeenCalled();
-            done();
-        });
-
-        // Make the failed call
-        querylabel.addRemove(false, res, next, 'addLabelToQuery');
-        it('should call next() from the catch passing the error', (done) => {
-            expect(next).toHaveBeenCalledWith(new Error('Rejected'));
             done();
         });
     });
 
     describe('addRemove (removeLabelFromQuery)', () => {
-        // res.json is used, so we should mock that
-        const res = { json: jest.fn(), send: jest.fn(), status: jest.fn() };
-        // Mock next so we can check it has been called
-        const next = jest.fn();
+        describe('successful calls', () => {
+            // Because querylabel.addRemove is returns a promise, we need to await it
+            // before we can test what it did.
+            beforeEach(async () => {
+                await querylabel.addRemove(
+                    { rowCount: 1, params: { query_id: '1,2,3', label_id: '5' }, rows: [mockResult] },
+                    res,
+                    next,
+                    'removeLabelFromQuery'
+                );
+            });
+            // res.json is used, so we should mock that
+            const res = { json: jest.fn(), send: jest.fn(), status: jest.fn() };
+            // Mock next so we can check it has been called
+            const next = jest.fn();
 
-        // Make the === 0 call
-        // Here we're telling our mocked removeLabelFromQuery DB resolver above to
-        // pretend it's not inserted/updated a label query relationship
-        querylabel.addRemove({ rowCount: 0 }, res, next, 'removeLabelFromQuery');
+            it('should call the DB resolver 3 times', (done) => {
+                expect(
+                    db.resolvers.querylabel.removeLabelFromQuery
+                ).toHaveBeenCalledTimes(3);
+                done();
+            });
 
-        it('should call the DB resolver', (done) => {
-            expect(
-                db.resolvers.querylabel.removeLabelFromQuery
-            ).toHaveBeenCalled();
-            done();
-        });
-        it('rowCount === 0 should call status(), passing 404', (done) => {
-            expect(res.status).toBeCalledWith(404);
-            done();
-        });
-        it('rowCount === 0 should call send()', (done) => {
-            expect(res.send).toHaveBeenCalled();
-            done();
-        });
-        it('rowCount === 0 should call next()', (done) => {
-            expect(next).toHaveBeenCalled();
-            done();
-        });
-
-        // Make the == 1 call
-        // Here we're telling our mocked removeLabelFromQuery DB resolver above to
-        // pretend it's successfully inserted 1 label query relationship
-        // POST:
-        querylabel.addRemove({
-            rowCount: 1, params: { query_id: 1 }
-        }, res, next, 'removeLabelFromQuery');
-
-        it('rowCount == 1 should call status(), passing 200', (done) => {
-            expect(res.status).toBeCalledWith(200);
-            done();
-        });
-        it('rowCount == 1 should call json()', (done) => {
-            expect(res.json).toHaveBeenCalled();
-            done();
-        });
-        it('rowCount == 1 should call next()', (done) => {
-            expect(next).toHaveBeenCalled();
-            done();
+            it('should call status(), passing 200', (done) => {
+                expect(res.status).toBeCalledWith(200);
+                done();
+            });
+            it('should call json()', (done) => {
+                expect(res.json).toHaveBeenCalled();
+                done();
+            });
+            it('should call next()', (done) => {
+                expect(next).toHaveBeenCalled();
+                done();
+            });
         });
 
-        // Make the > 1 call
-        // Here we're telling our mocked removeLabelFromQuery DB resolver above to
-        // pretend it's deleted > 1 rows which shouldn't ever happen
-        // POST:
-        querylabel.addRemove({ rowCount: 2 }, res, next, 'removeLabelFromQuery');
+        describe('failed calls', () => {
+            // Because querylabel.addRemove is returns a promise, we need to await it
+            // before we can test what it did.
+            beforeEach(async () => {
+                await querylabel.addRemove(
+                    { rowCount: 1, params: { query_id: '1138', label_id: '5' }, rows: [mockResult] },
+                    res,
+                    next,
+                    'removeLabelFromQuery'
+                );
+            });
+            // res.json is used, so we should mock that
+            const res = { json: jest.fn(), send: jest.fn(), status: jest.fn() };
+            // Mock next so we can check it has been called
+            const next = jest.fn();
 
-        it('rowCount > 1 should call status(), passing 500', (done) => {
-            expect(res.status).toBeCalledWith(500);
-            done();
-        });
-        it('rowCount > 1 should call send()', (done) => {
-            expect(res.send).toHaveBeenCalled();
-            done();
-        });
-        it('rowCount > 1 should call next()', (done) => {
-            expect(next).toHaveBeenCalled();
-            done();
-        });
-
-        // Make the failed call
-        querylabel.addRemove(false, res, next, 'removeLabelFromQuery');
-        it('should call next() from the catch passing the error', (done) => {
-            expect(next).toHaveBeenCalledWith(new Error('Rejected'));
-            done();
+            it('should call next() from the catch passing the error', (done) => {
+                expect(next).toHaveBeenCalledWith(new Error('Rejected'));
+                done();
+            });
         });
     });
 });

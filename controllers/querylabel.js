@@ -4,26 +4,38 @@ const helpers = require('../helpers/queries');
 
 const querylabel = {
     addRemove: (req, res, next, action) => {
-        const func = db.resolvers.querylabel[action];
-        return func(req).then(async (response) => {
-            if (response.rowCount === 0) {
-                res.status(404);
-                res.send();
-                next();
-            } else if (response.rowCount === 1) {
-                // Fetch and return the updated query object
-                const queries = await db.resolvers.queries.getQuery({
-                    params: { id: req.params.query_id }
+        // Here I am electing to call the DB resolver once for each
+        // relationship. It would be possible to modify the query itself
+        // to insert/delete all rows in a single operation, but this method
+        // is clearer. If I see performance issues related to this, a switch
+        // to an atomic action should fix it. We are also getting each updated
+        // query individually, this could be enhanced similarly
+        //
+        // We can behave as if we're getting multiple IDs, where we may
+        // actually only be getting one
+        const queryLabels = req.params.query_id.split(',');
+
+        // Establish what resolver we need
+        const dbResolver = db.resolvers.querylabel[action];
+        // Resolvers return promises, so create an array of them
+        const updates = queryLabels.map((queryId) => dbResolver(
+            { params: { query_id: queryId, label_id: req.params.label_id } }
+        ));
+        // When all DB operations are complete, get all updated queries
+        // and return them
+        return Promise.all(updates).then(async (responses) => {
+            const out = queryLabels.map(async (queryId) => {
+                const query = await db.resolvers.queries.getQuery({
+                    params: { id: queryId }
                 });
-                const toSend = await helpers.addEmbeds(queries);
+                const embedded = await helpers.addEmbeds(query);
+                return embedded[0];
+            });
+            Promise.all(out).then((toReturn) => {
                 res.status(200);
-                res.json(toSend[0]);
+                res.json(toReturn);
                 next();
-            } else {
-                res.status(500);
-                res.send();
-                next();
-            }
+            });
         })
         .catch((err) => next(err));
 

@@ -72,7 +72,29 @@ const queries = {
                     next();
                 }
             })
-            .catch((err) => next(err))
+            .catch((err) => next(err)),
+    updateBulk: (req, res, next) => {
+        const updates = db.resolvers.queries.updateBulk(req);
+        // Wait until all updates are complete (we're allowing for the fact
+        // that some may fail, hence allSettled)
+        return Promise.allSettled(updates)
+            .then(async (results) => {
+                // Prepare a response containing the updated query objects
+                // We're not specifically handling updates that failed here.
+                // The could be idenfitied by looking at result.status === 'rejected'
+                // but what to do in that situation? Needs more thought, as it stands
+                // any updates that fail will just remain unchanged in the UI
+                //
+                // Just get the query objects
+                const resultArray = results.map(
+                    (thisResult) => thisResult.value.rows[0]
+                );
+                const embedded = await helpers.addEmbeds({ rows: resultArray });
+                res.status(200);
+                res.json(embedded);
+                next();
+            })
+    }
 };
 
 module.exports = queries;

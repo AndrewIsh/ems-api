@@ -72,6 +72,24 @@ jest.mock('../../../ems-db', () => ({
                     });
                 }
             }),
+            // A mock DB resolver that returns an array of promises,
+            // each resolving to what was passed
+            updateBulk: jest.fn((passed) => {
+                if (passed) {
+                    return passed.map((passedItem) => {
+                        return new Promise((resolve) => {
+                            return resolve(passedItem);
+                        });
+                    });
+                } else {
+                    // Return an array containing 3 promise rejections
+                    return [1,2,3].map((passedItem) => {
+                        return new Promise((resolve, reject) => {
+                            return reject(new Error('Rejected'));
+                        });
+                    });
+                }
+            }),
             // A mock DB resolver for initiators that returns a mock initiator
             initiators: jest.fn((passed, shouldHaveInitiator) => {
                 if (passed) {
@@ -397,6 +415,41 @@ describe('Queries', () => {
         queries.deleteQuery(false, res, next);
         it('should call next() from the catch passing the error', (done) => {
             expect(next).toHaveBeenCalledWith(new Error('Rejected'));
+            done();
+        });
+    });
+
+    describe('updateBulk', () => {
+        beforeEach(async () => {
+            await queries.updateBulk([
+                { rowCount: 1, rows: [mockResult], method: 'PUT' },
+                { rowCount: 1, rows: [mockResult], method: 'PUT' },
+                { rowCount: 1, rows: [mockResult], method: 'PUT' },
+            ], res, next);
+        });
+        // res.json is used, so we should mock that
+        const res = { json: jest.fn(), send: jest.fn(), status: jest.fn() };
+        // Mock next so we can check it has been called
+        const next = jest.fn();
+
+        // Here we're telling our mocked upsertQuery DB resolver above to
+        // pretend it's successfully updated 3 queries
+        // POST:
+        it('the updateBulk DB resolver should be called', async (done) => {
+            expect(db.resolvers.queries.updateBulk).toHaveBeenCalled();
+            done();
+        });
+        it('status() should be called, passing 200', (done) => {
+            expect(res.status).toBeCalledWith(200);
+            done();
+        });
+        it('json() should be called, passing the 3 results', (done) => {
+            const mockResults = [{ "id": 1, "initiator": 1, "labels": [1], "latestMessage": { "query_id": 1 }, "participants": [1] }, { "id": 1, "initiator": 1, "labels": [1], "latestMessage": { "query_id": 1 }, "participants": [1] }, { "id": 1, "initiator": 1, "labels": [1], "latestMessage": { "query_id": 1 }, "participants": [1] }];
+            expect(res.json).toBeCalledWith(mockResults);
+            done();
+        });
+        it('should call next()', (done) => {
+            expect(next).toHaveBeenCalled();
             done();
         });
     });
