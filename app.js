@@ -3,7 +3,9 @@ const path = require('path');
 
 const express = require('express');
 const cors = require('cors');
-const bodyParser = require('body-parser');
+const { json, urlencoded } = require('body-parser');
+const cookieParser = require('cookie-parser');
+const passport = require('passport');
 const multer = require('multer');
 const helmet = require('helmet');
 const logger = require('morgan');
@@ -11,6 +13,7 @@ const OpenApiValidator = require('express-openapi-validator').OpenApiValidator;
 
 const apiRouter = require('./api');
 const { errorFallback } = require('./middleware/error-handler');
+const { initialiseAuthentication } = require('./auth');
 
 process.env.UPLOADS_DIR = 'uploads';
 
@@ -33,11 +36,23 @@ module.exports = {
         });
 
         // Middleware
-        app.use(cors());
+        //
+        // CORS - here we are allowing the client to access the Authorization header
+        // We should only need CORS when in development, we want to not allow CORS
+        // when in production as a partial mitigation against CSRF
+        if (process.env.NODE_ENV === 'development') {
+            app.use(cors((req, cb) => cb(null, {
+                exposedHeaders: 'Authorization',
+                credentials: true,
+                origin: `${process.env.CLIENT_HOST}:${process.env.CLIENT_PORT}`
+            })));
+        }
         app.use(helmet());
-        app.use(bodyParser.json());
+        app.use(cookieParser());
+        app.use(urlencoded({ extended: true }));
+        app.use(json());
         app.use(logger('combined', { stream: accessLogStream }));
-
+        app.use(passport.initialize());
 
         // Configure how we are storing our file uploads
         const storage = multer.diskStorage({
@@ -50,7 +65,7 @@ module.exports = {
                 const suffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
                 cb(null, filename + '-' + suffix + ext);
             }
-        })
+        });
 
         // Install the OpenAPI validator
         await new OpenApiValidator({
@@ -64,6 +79,9 @@ module.exports = {
 
         // API route
         app.use('/api', apiRouter);
+
+        // Ensure we have the authentication methods we need
+        initialiseAuthentication(app);
 
         // If we reach this middleware, we need to log an error
         app.use(errorFallback);

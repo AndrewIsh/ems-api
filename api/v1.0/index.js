@@ -1,5 +1,7 @@
 const router = require('express').Router();
 
+const { postJwtAuth } = require('../../helpers/token');
+
 const {
     queryRouter,
     messageRouter,
@@ -7,15 +9,47 @@ const {
     labelRouter,
     userRouter,
     roleRouter,
-    uploadRouter
+    uploadRouter,
+    tokenRouter,
+    activeUserRouter,
+    authTypesRouter
 } = require('./routes');
 
-router.use('/queries', queryRouter);
-router.use('/messages', messageRouter);
-router.use('/folders', folderRouter);
-router.use('/labels', labelRouter);
-router.use('/users', userRouter);
-router.use('/roles', roleRouter);
-router.use('/upload', uploadRouter);
+// Routes to be registered with the router
+//
+// Routes that require a JWT (and therefore need
+// handling of the case where the JWT validation failed)
+const withJwt = [
+    { path: 'queries', router: queryRouter },
+    { path: 'messages', router: messageRouter },
+    { path: 'folders', router: folderRouter },
+    { path: 'labels', router: labelRouter },
+    { path: 'users', router: userRouter },
+    { path: 'roles', router: roleRouter },
+    { path: 'upload', router: uploadRouter },
+    { path: 'activeuser', router: activeUserRouter }
+];
+
+// Routes that don't require a JWT
+const withoutJwt = [
+    { path: 'token', router: tokenRouter },
+    { path: 'authtypes', router: authTypesRouter}
+
+];
+
+withJwt.forEach(
+    (aRoute) => router.use(
+        `/${aRoute.path}`,
+        (req, res, next) => postJwtAuth(req, res, next),
+        aRoute.router
+    )
+);
+
+withoutJwt.forEach(
+    (uRoute) => router.use(
+        `/${uRoute.path}`,
+        uRoute.router
+    )
+);
 
 module.exports = router;

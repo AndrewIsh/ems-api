@@ -596,6 +596,44 @@ paths:
           description: Folder not found
         '500':
           description: Server error
+  /activeuser:
+    get:
+      summary: Returns a user object for the user defined in the JWT
+      operationId: getActiveUser
+      responses:
+        '200':
+          description: A single user object
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas/user.yaml'
+        '401':
+          description: Unauthorised
+        '404':
+          description: User not found
+        '500':
+          description: Server error
+  /token:
+    get:
+      summary: Receives a refresh token and, if valid, returns a JWT and a new refresh token
+      operationId: refreshToken
+      responses:
+        '200':
+          description: An empty response containing a new JWT and refresh token
+        '401':
+          description: Refresh token not found
+        '500':
+          description: Server error
+    delete:
+      summary: Receives a refresh token and deletes it from the token cache
+      operationId: deleteToken
+      responses:
+        '204':
+          description: An empty success response
+        '404':
+          description: Refresh token not found
+        '500':
+          description: Server error
   /roles:
     get:
       summary: Returns all roles
@@ -636,6 +674,19 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas/message.yaml'
+        '500':
+          description: Server error
+  /authtypes:
+    get:
+      summary: Returns an array of available authentication types
+      operationId: authTypes
+      responses:
+        '200':
+          description: An array of auth types
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas/authtypes.yaml'
         '500':
           description: Server error
 

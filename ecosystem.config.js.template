@@ -9,19 +9,41 @@ module.exports = {
             max_memory_restart: '1G',
             env: {
                 NODE_ENV: 'development',
+                CLIENT_HOST: 'http://frontend_domain',
+                CLIENT_PORT: 8000,
                 PGUSER: '<db_user>',
                 PGPASSWORD: '<db_password>',
                 SCHEMA: '<db_user>',
                 API_PORT: <api_port>,
-                LOG_FILE: '/tmp/access.log'
+                LOG_FILE: '/tmp/access.log',
+                GOOGLE_NAME: null,
+                GOOGLE_OAUTH_CLIENT_ID: null
+                GOOGLE_OAUTH_CLIENT_SECRET: null,
+                SAML_NAME: null,
+                SAML_ENTRY_POINT: null,
+                SAML_ISSUER_STRING: null,
+                SAML_LOGOUT_ENDPOINT: null,
+                SAML_UID_ATTR: 'nameID',
+                JWT_SECRET: null
             },
             env_production: {
                 NODE_ENV: 'production',
+                CLIENT_HOST: 'http://frontend_domain',
+                CLIENT_PORT: 8000,
                 PGUSER: '<db_user>',
                 PGPASSWORD: '<db_password>',
                 SCHEMA: '<db_user>',
                 API_PORT: <api_port>,
-                LOG_FILE: '/tmp/access.log'
+                LOG_FILE: '/tmp/access.log',
+                GOOGLE_NAME: null,
+                GOOGLE_OAUTH_CLIENT_ID: null
+                GOOGLE_OAUTH_CLIENT_SECRET: null,
+                SAML_NAME: null,
+                SAML_ENTRY_POINT: null,
+                SAML_ISSUER_STRING: null,
+                SAML_LOGOUT_ENDPOINT: null,
+                SAML_UID_ATTR: 'nameID',
+                JWT_SECRET: null
             }
         }
     ]

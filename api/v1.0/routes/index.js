@@ -5,6 +5,9 @@ const labelRouter = require('./labels');
 const userRouter = require('./users');
 const roleRouter = require('./roles');
 const uploadRouter = require('./uploads');
+const tokenRouter = require('./token');
+const activeUserRouter = require('./activeuser');
+const authTypesRouter = require('./authtypes');
 
 module.exports = {
     queryRouter,
@@ -13,5 +16,8 @@ module.exports = {
     labelRouter,
     userRouter,
     roleRouter,
-    uploadRouter
+    uploadRouter,
+    tokenRouter,
+    activeUserRouter,
+    authTypesRouter
 };
