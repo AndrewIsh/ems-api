@@ -26,7 +26,9 @@ const uploads = {
                 });
                 const updated = await Promise.all(dbUpdates);
                 const toSend = updated.map(update => update.rows[0]);
+                req.wsData = toSend;
                 res.send(toSend)
+                next();
             }
         } catch (error) {
             res.status(500);

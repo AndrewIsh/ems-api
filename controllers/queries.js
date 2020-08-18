@@ -48,6 +48,11 @@ const queries = {
                 const toSend = await helpers.addEmbeds(result);
                 res.status(req.method === 'POST' ? 201 : 200);
                 res.json(toSend[0]);
+                // Make the query available to the websockets
+                // sending middleware
+                req.wsData = {
+                    query: toSend[0]
+                };
                 next();
             }
         } catch (err) {

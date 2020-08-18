@@ -3,7 +3,7 @@ const fs = require('fs');
 const db = require('../../ems-db');
 
 const messages = {
-    getMessages: async (req, res, next) =>
+    getMessages: (req, res, next) =>
         db.resolvers.messages
             .allMessages(req)
             .then((result) => {
@@ -26,8 +26,14 @@ const messages = {
                     res.send();
                     next();
                 } else {
+                    const message = result.rows[0];
+
+                    // Make the message available to the websockets
+                    // sending middleware
+                    req.wsData = message;
+
                     res.status(req.method === 'POST' ? 201 : 200);
-                    res.json(result.rows[0]);
+                    res.json(message);
                     next();
                 }
             })
@@ -51,6 +57,11 @@ const messages = {
                     return db.resolvers.messages
                         .deleteMessage(req)
                         .then(() => {
+
+                            // Make the necessary data available to the
+                            // websockets sending middleware
+                            req.wsData = toDelete.rows[0];
+
                             // We need to delete any file attachment associated with
                             // this message
                             if (delFilename) {
