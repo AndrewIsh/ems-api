@@ -69,11 +69,28 @@ const samlConfig = () => {
     }
 };
 
+const checkIsInRole = (...roles) => (req, res, next) => {
+    if (!req.user) {
+        res.status(401);
+        res.send('User not found');
+        return next();
+    }
+    const hasRole = roles.find(role => req.user.role_code === role);
+    if (!hasRole) {
+        res.status(401);
+        res.send('Role not found');
+        return next();
+    }
+
+    return next();
+};
+
 module.exports = {
     serializeCallback,
     deserializeCallback,
     setup,
     googleConfig,
     samlConfig,
-    getAvailableAuthtypes
+    getAvailableAuthtypes,
+    checkIsInRole
 };

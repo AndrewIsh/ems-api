@@ -1,6 +1,7 @@
 const router = require('express').Router();
 
 const uploads = require('../../../controllers/uploads');
+const { checkIsInRole } = require('../../../auth/utils');
 
 const {
     uploadsSideEffects,
@@ -9,6 +10,7 @@ const {
 
 router.post(
     '/',
+    checkIsInRole('STAFF', 'CUSTOMER'),
     uploads.handleUpload,
     uploadsSideEffects.sendUploads,
     queriesSideEffects.updateQuery

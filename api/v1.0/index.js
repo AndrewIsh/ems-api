@@ -33,8 +33,7 @@ const withJwt = [
 // Routes that don't require a JWT
 const withoutJwt = [
     { path: 'token', router: tokenRouter },
-    { path: 'authtypes', router: authTypesRouter}
-
+    { path: 'authtypes', router: authTypesRouter }
 ];
 
 withJwt.forEach(

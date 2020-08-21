@@ -65,14 +65,16 @@ const addRefreshToken = (res, token) => {
 };
 
 // Passport custom callback to determine if passport-jwt
-// failed JWT validation or not
+// failed JWT validation or not. If not, we add the user
+// to the request object
 const postJwtAuth = (req, res, next) => {
-    return passport.authenticate('jwt', (err, user, info) => {
+    return passport.authenticate('jwt', (err, user) => {
         // If the JWT authentication failed
         // attempt to refresh with the refresh token
         if (!user) {
             doRefresh(req, res, next);
         } else {
+            req.user = user;
             next();
         }
     })(req, res, next);
@@ -93,7 +95,7 @@ const doRefresh = async (req, res, next) => {
         const userId = AuthCache.findByToken(currentToken);
         if (userId) {
             try {
-                userResult = await db.resolvers.users.getUser({ params: { id: userId } });
+                const userResult = await db.resolvers.users.getUser({ params: { id: userId } });
                 if (userResult.rowCount !== 1) {
                     throw 'Could not find user';
                 }

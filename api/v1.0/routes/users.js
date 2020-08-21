@@ -1,11 +1,12 @@
 const router = require('express').Router();
 
 const users = require('../../../controllers/users');
+const { checkIsInRole } = require('../../../auth/utils');
 
-router.get('/', users.getUsers);
-router.get('/:id', users.getUser);
-router.post('/', users.upsertUser);
-router.put('/:id', users.upsertUser);
-router.delete('/:id', users.deleteUser);
+router.get('/', checkIsInRole('STAFF', 'CUSTOMER'), users.getUsers);
+router.get('/:id', checkIsInRole('STAFF', 'CUSTOMER'), users.getUser);
+router.post('/', checkIsInRole('STAFF'), users.upsertUser);
+router.put('/:id', checkIsInRole('STAFF'), users.upsertUser);
+router.delete('/:id', checkIsInRole('STAFF'), users.deleteUser);
 
 module.exports = router;

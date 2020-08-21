@@ -1,26 +1,30 @@
 const router = require('express').Router();
 
 const messages = require('../../../controllers/messages');
+const { checkIsInRole } = require('../../../auth/utils');
 
 const {
     messagesSideEffects,
     queriesSideEffects
 } = require('../../../middleware/side-effects');
 
-router.get('/', messages.getMessages);
+router.get('/', checkIsInRole('STAFF', 'CUSTOMER'), messages.getMessages);
 router.post(
     '/',
+    checkIsInRole('STAFF', 'CUSTOMER'),
     messages.upsertMessage,
     messagesSideEffects.sendMessage,
     queriesSideEffects.updateQuery
 );
 router.put(
     '/:id',
+    checkIsInRole('STAFF', 'CUSTOMER'),
     messages.upsertMessage,
     messagesSideEffects.sendMessage,
     queriesSideEffects.updateQuery
 );
 router.delete('/:id',
+    checkIsInRole('STAFF', 'CUSTOMER'),
     messages.deleteMessage,
     messagesSideEffects.deleteMessage,
     queriesSideEffects.updateQuery
