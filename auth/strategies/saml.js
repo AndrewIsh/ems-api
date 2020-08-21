@@ -36,7 +36,7 @@ const Saml = (app) => {
         // First identify whether this user already exists. We can't do this
         // with a straight lookup because we need to identify them using
         // the bcrypt.compare method, so we grab all users and find them
-        db.resolvers.users.allUsers({ query: {}}).then((allUsers) => {
+        db.resolvers.users.allUsers({ query: {} }).then((allUsers) => {
             // Note: This is potentially a slow operation as we're performing a
             // *synchronous* compare on, potentially, every user. Since
             // these synchronous calls block the main thread, we may want to switch
@@ -90,10 +90,10 @@ const Saml = (app) => {
                 failureRedirect: '/login'
             }
         ),
-        async (req, res) => {
+        (req, res) => {
             // Generate a refresh token and redirect the useragent back to the client,
             // at which point they will use the refresh token to obtain a JWT
-            const token = await generateRefresh(req.user.id);
+            const token = generateRefresh(req.user);
             addRefreshToken(res, token);
             const port = process.env.CLIENT_PORT.length > 0 ? `:${process.env.CLIENT_PORT}` : '';
             return res.redirect(302, `${process.env.CLIENT_HOST}${port}`);

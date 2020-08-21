@@ -1,8 +1,9 @@
 const { v4 } = require('uuid');
 const jwt = require('jsonwebtoken');
 const passport = require('passport');
+const db = require('../../ems-db');
 
-const TokenCache = require('../helpers/TokenCache');
+const AuthCache = require('../helpers/AuthCache');
 
 // Given an Express request object, extract the JWT
 const getTokenFromRequest = (req) => {
@@ -35,15 +36,15 @@ const verifyJwt = (payload) => {
 };
 
 // Generate and store a refresh token
-const generateRefresh = (userId) => {
+const generateRefresh = ({ id, role_code }) => {
     const newToken = v4();
-    TokenCache.storeToken({ userId, newToken });
+    AuthCache.store({ userId: id, newToken, role: role_code });
     return newToken;
 }
 
 // Find and delete a refresh token
 const deleteRefresh = (token) => {
-    TokenCache.deleteToken(token);
+    AuthCache.delete(token);
 };
 
 // Add a refresh token to a response object
@@ -84,16 +85,21 @@ const postJwtAuth = (req, res, next) => {
 // Set the refresh in a cookie, set an Authorization header
 // containing the JWT.
 // If we fail for any reason, return 401
-const doRefresh = (req, res, next) => {
+const doRefresh = async (req, res, next) => {
     // First check for the token in the cookie
     const currentToken = req.cookies.refresh_token;
     if (currentToken) {
         // We have a token, find the user that it belongs to
-        const userId = TokenCache.findByToken(currentToken);
+        const userId = AuthCache.findByToken(currentToken);
         if (userId) {
-            const jwt = generateJwt(userId);
             try {
-                const newRefresh = generateRefresh(userId);
+                userResult = await db.resolvers.users.getUser({ params: { id: userId } });
+                if (userResult.rowCount !== 1) {
+                    throw 'Could not find user';
+                }
+                const user = userResult.rows[0];
+                const jwt = generateJwt(userId);
+                const newRefresh = generateRefresh(user);
                 res.set('Authorization', `Bearer ${jwt}`);
                 addRefreshToken(res, newRefresh);
                 res.status(200);
@@ -101,9 +107,10 @@ const doRefresh = (req, res, next) => {
                 next();
             } catch (err) {
                 res.status(401);
-                res.send('Unable to generate refresh token');
+                res.send(err || 'Unable to find user from token');
                 next();
             }
+
         } else {
             res.status(401);
             res.send('Invalid refresh token');

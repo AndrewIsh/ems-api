@@ -3,8 +3,8 @@ const passport = require('passport');
 // The thing we're testing
 const token = require('../../helpers/token');
 
-// The TokenCache class that token.js depends on
-const TokenCache = require('../../helpers/TokenCache');
+// The AuthCache class that token.js depends on
+const AuthCache = require('../../helpers/AuthCache');
 const { postJwtAuth, doRefresh } = require('../../helpers/token');
 
 const mockToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyMyIsImlhdCI6MTU5NzMwODYwOSwiZXhwIjoxNTk3MzA5NTA5fQ.hZoxIe79mhHIgC-ihSitGPUw9R6ViRFprhh1gn-ymt4';
@@ -80,20 +80,20 @@ describe('verifyJwt', () => {
 });
 
 describe('generateRefresh', () => {
-    it('should take a userId, call storeToken and return a generated UUID', () => {
-        TokenCache.storeToken = jest.fn();
+    it('should take a userId, call store and return a generated UUID', () => {
+        AuthCache.store = jest.fn();
         const newToken = token.generateRefresh('89');
-        expect(TokenCache.storeToken).toBeCalledWith({ userId: '89', newToken: '123' });
+        expect(AuthCache.store).toBeCalledWith({ userId: '89', newToken: '123' });
         expect(newToken).toEqual('123');
     });
 });
 
 describe('deleteRefresh', () => {
-    it('should call TokenCache.deleteToken', () => {
-        TokenCache.deleteToken = jest.fn();
+    it('should call AuthCache.delete', () => {
+        AuthCache.delete = jest.fn();
         // It's just a wrapper so check it calls what it's supposed to
         token.deleteRefresh('123');
-        expect(TokenCache.deleteToken).toBeCalled();
+        expect(AuthCache.delete).toBeCalled();
     });
 });
 
@@ -152,7 +152,7 @@ describe('postJwtAuth', () => {
 */
 
 describe('doRefresh', () => {
-    TokenCache.findByToken = jest.fn((passed) => passed);
+    AuthCache.findByToken = jest.fn((passed) => passed);
     const goodMockRequest = {
         cookies: {
             refresh_token: '1234'
@@ -201,7 +201,7 @@ describe('doRefresh', () => {
         expect(mockNext).toBeCalled();
     });
     it('when passed a request with a token not in the cache, should form res correctly', () => {
-        TokenCache.findByToken = jest.fn(() => null);
+        AuthCache.findByToken = jest.fn(() => null);
         doRefresh(goodMockRequest, mockRes, mockNext);
         expect(resStatus).toBeCalledWith(401);
         expect(resSend).toBeCalledWith('Invalid refresh token');

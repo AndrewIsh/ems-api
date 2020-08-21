@@ -68,10 +68,10 @@ const Google = (app) => {
                 failureRedirect: '/login',
             }
         ),
-        async (req, res) => {
+        (req, res) => {
             // Generate a refresh token and redirect the useragent back to the client,
             // at which point they will use the refresh token to obtain a JWT
-            const token = await generateRefresh(req.user.id);
+            const token = generateRefresh(req.user);
             addRefreshToken(res, token);
             const port = process.env.CLIENT_PORT.length > 0 ? `:${process.env.CLIENT_PORT}` : '';
             return res.redirect(302, `${process.env.CLIENT_HOST}${port}`);
