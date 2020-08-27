@@ -7,7 +7,7 @@ const messages = {
         const socketAction = req.method === 'POST' ?
             'create' :
             'update';
-        const message = req.wsData;
+        const { message } = req.wsData;
         // Send the new message via the websocket
         WebsocketServer.excludeInitiatorMessage({
             initiator: message.creator_id,
@@ -20,7 +20,7 @@ const messages = {
     // Inform all clients, apart from the initiator, that
     // a message has been deleted
     deleteMessage: (req, res, next) => {
-        const message = req.wsData;
+        const { message } = req.wsData;
         // Send the deleted message details via the websocket
         WebsocketServer.excludeInitiatorMessage({
             initiator: message.creator_id,

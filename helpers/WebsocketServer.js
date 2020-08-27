@@ -62,7 +62,26 @@ class WebsocketServer {
                 );
             }
         });
-
+    }
+    // Send a message to only the client that initiated the action
+    onlyInitiatorMessage({ initiator, subject, action, payload }) {
+        const BreakException = {};
+        try {
+            this.socketServer.clients.forEach((client) => {
+                if (
+                    parseInt(client.userId) === parseInt(initiator) &&
+                    client.readyState === WebSocket.OPEN
+                ) {
+                    client.send(
+                        JSON.stringify({ initiator, subject, action, payload })
+                    );
+                    // Found our client, exit the forEach
+                    throw BreakException;
+                }
+            });
+        } catch (e) {
+            if (e !== BreakException) throw e;
+        }
     }
 }
 

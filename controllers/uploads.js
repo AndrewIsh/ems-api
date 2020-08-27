@@ -26,7 +26,7 @@ const uploads = {
                 });
                 const updated = await Promise.all(dbUpdates);
                 const toSend = updated.map(update => update.rows[0]);
-                req.wsData = toSend;
+                req.wsData = { uploads: toSend }
                 res.send(toSend)
                 next();
             }

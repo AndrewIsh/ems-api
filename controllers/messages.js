@@ -30,7 +30,7 @@ const messages = {
 
                     // Make the message available to the websockets
                     // sending middleware
-                    req.wsData = message;
+                    req.wsData = { message };
 
                     res.status(req.method === 'POST' ? 201 : 200);
                     res.json(message);
@@ -55,12 +55,12 @@ const messages = {
                         toDelete.rows[0].filename :
                         null;
                     return db.resolvers.messages
-                        .deleteMessage(req)
+                        .deleteMessage(req, toDelete.rows[0])
                         .then(() => {
 
                             // Make the necessary data available to the
                             // websockets sending middleware
-                            req.wsData = toDelete.rows[0];
+                            req.wsData = { message: toDelete.rows[0] }
 
                             // We need to delete any file attachment associated with
                             // this message
