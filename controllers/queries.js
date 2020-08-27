@@ -10,6 +10,10 @@ const queries = {
         try {
             // First get the queries we're dealing with
             const queries = await db.resolvers.queries.allQueries(req);
+            const query_ids = queries.rows.map((row) => row.id);
+            // Add the IDs of the queries we retrieved, for the benefit
+            // of any side effect middleware
+            req.wsData = { query_ids };
             const toSend = await helpers.addEmbeds(queries);
             res.json(toSend);
             next();

@@ -4,8 +4,14 @@ const queries = require('../../../controllers/queries');
 const querylabel = require('../../../controllers/querylabel');
 const queryuser = require('../../../controllers/queryuser');
 const { checkIsInRole } = require('../../../auth/utils');
+const { queriesSideEffects } = require('../../../middleware/side-effects');
 
-router.get('/', checkIsInRole('STAFF', 'CUSTOMER'), queries.getQueries);
+router.get(
+    '/',
+    checkIsInRole('STAFF', 'CUSTOMER'),
+    queries.getQueries,
+    queriesSideEffects.updateUserUnseenCounts
+);
 router.get('/:id', checkIsInRole('STAFF', 'CUSTOMER'), queries.getQuery);
 router.post('/', checkIsInRole('STAFF', 'CUSTOMER'), queries.upsertQuery);
 router.put('/', checkIsInRole('STAFF'), queries.updateBulk);
