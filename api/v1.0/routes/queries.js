@@ -9,8 +9,8 @@ router.get(
     '/',
     checkIsInRole('STAFF', 'CUSTOMER'),
     queries.getQueries,
-    queriesSideEffects.updateUserUnseenCounts,
-    queriesSideEffects.updateMostRecentSeen
+    queriesSideEffects.userUnseenCountsToClient,
+    queriesSideEffects.mostRecentSeenToClient
 );
 router.get('/:id', checkIsInRole('STAFF', 'CUSTOMER'), queries.getQuery);
 router.post('/', checkIsInRole('STAFF', 'CUSTOMER'), queries.upsertQuery);

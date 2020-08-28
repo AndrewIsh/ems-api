@@ -10,7 +10,7 @@ router.put(
     '/:query_id/user/:user_id',
     checkIsInRole('STAFF', 'CUSTOMER'),
     queryuser.updateMostRecentSeen,
-    queriesSideEffects.updateUserUnseenCounts
+    queriesSideEffects.userUnseenCountsToClient
 );
 
 module.exports = router;

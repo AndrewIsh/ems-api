@@ -3,7 +3,7 @@ const WebsocketServer = require('../../helpers/WebsocketServer');
 const uploads = {
     // Inform all clients, apart from the initiator, that
     // one or more uploads have been sent
-    sendUploads: (req, res, next) => {
+    newUploadToClients: (req, res, next) => {
         const { uploads } = req.wsData;
         // Send the new message via the websocket
         WebsocketServer.excludeInitiatorMessage({

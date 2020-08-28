@@ -12,8 +12,8 @@ router.post(
     '/',
     checkIsInRole('STAFF', 'CUSTOMER'),
     uploads.handleUpload,
-    uploadsSideEffects.sendUploads,
-    queriesSideEffects.updateQuery
+    uploadsSideEffects.newUploadToClients,
+    queriesSideEffects.updatedQueryToClients
 );
 
 module.exports = router;

@@ -3,7 +3,7 @@ const WebsocketServer = require('../../helpers/WebsocketServer');
 const messages = {
     // Inform all clients, apart from the initiator, that
     // a message has been created or updated
-    sendMessage: (req, res, next) => {
+    newMessageToClients: (req, res, next) => {
         const socketAction = req.method === 'POST' ?
             'create' :
             'update';
@@ -19,7 +19,7 @@ const messages = {
     },
     // Inform all clients, apart from the initiator, that
     // a message has been deleted
-    deleteMessage: (req, res, next) => {
+    deletedMessageToClients: (req, res, next) => {
         const { message } = req.wsData;
         // Send the deleted message details via the websocket
         WebsocketServer.excludeInitiatorMessage({

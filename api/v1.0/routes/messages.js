@@ -13,23 +13,23 @@ router.post(
     '/',
     checkIsInRole('STAFF', 'CUSTOMER'),
     messages.upsertMessage,
-    messagesSideEffects.sendMessage,
-    queriesSideEffects.updateQuery,
-    queriesSideEffects.updateQueryUnseenCounts
+    messagesSideEffects.newMessageToClients,
+    queriesSideEffects.updatedQueryToClients,
+    queriesSideEffects.queryUnseenCountsToClients
 );
 router.put(
     '/:id',
     checkIsInRole('STAFF', 'CUSTOMER'),
     messages.upsertMessage,
-    messagesSideEffects.sendMessage,
-    queriesSideEffects.updateQuery
+    messagesSideEffects.newMessageToClients,
+    queriesSideEffects.updatedQueryToClients
 );
 router.delete('/:id',
     checkIsInRole('STAFF', 'CUSTOMER'),
     messages.deleteMessage,
-    messagesSideEffects.deleteMessage,
-    queriesSideEffects.updateQuery,
-    queriesSideEffects.updateQueryUnseenCounts
+    messagesSideEffects.deletedMessageToClients,
+    queriesSideEffects.updatedQueryToClients,
+    queriesSideEffects.queryUnseenCountsToClients
 );
 
 module.exports = router;
