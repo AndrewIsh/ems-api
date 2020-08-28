@@ -439,32 +439,7 @@ paths:
                 $ref: 'schemas/queryresponses.yaml'
         '500':
           description: Server error
-  /queries/{query_id}/user/{user_id}:
-    post:
-      summary: Create a new queryuser relationship
-      operationId: createQueryUser
-      parameters:
-        - name: query_id
-          in: path
-          description: Query ID
-          required: true
-          schema:
-            type: integer
-        - name: user_id
-          in: path
-          description: User ID
-          required: true
-          schema:
-            type: integer
-      responses:
-        '201':
-          description: The created queryuser object
-          content:
-            application/json:
-              schema:
-                $ref: 'schemas/queryuser.yaml'
-        '500':
-          description: Server error
+  /queryuser/{query_id}/user/{user_id}:
     put:
       summary: Update a queryuser relationship
       operationId: updateQueryUser

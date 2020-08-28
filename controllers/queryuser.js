@@ -11,6 +11,7 @@ const queryuser = {
                     next();
                 } else if (result.rowCount === 1) {
                     res.status(200);
+                    req.wsData = { query_ids: [result.rows[0].query_id] };
                     res.json(result.rows[0]);
                     next();
                 } else {

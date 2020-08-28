@@ -2,7 +2,6 @@ const router = require('express').Router();
 
 const queries = require('../../../controllers/queries');
 const querylabel = require('../../../controllers/querylabel');
-const queryuser = require('../../../controllers/queryuser');
 const { checkIsInRole } = require('../../../auth/utils');
 const { queriesSideEffects } = require('../../../middleware/side-effects');
 
@@ -10,7 +9,8 @@ router.get(
     '/',
     checkIsInRole('STAFF', 'CUSTOMER'),
     queries.getQueries,
-    queriesSideEffects.updateUserUnseenCounts
+    queriesSideEffects.updateUserUnseenCounts,
+    queriesSideEffects.updateMostRecentSeen
 );
 router.get('/:id', checkIsInRole('STAFF', 'CUSTOMER'), queries.getQuery);
 router.post('/', checkIsInRole('STAFF', 'CUSTOMER'), queries.upsertQuery);
@@ -23,7 +23,5 @@ router.post('/:query_id/label/:label_id', checkIsInRole('STAFF'), (req, res, nex
     querylabel.addRemove(req, res, next, 'addLabelToQuery'));
 router.delete('/:query_id/label/:label_id', checkIsInRole('STAFF'), (req, res, next) =>
     querylabel.addRemove(req, res, next, 'removeLabelFromQuery'));
-router.put('/:query_id/user/:user_id', checkIsInRole('STAFF', 'CUSTOMER'),
-    queryuser.updateMostRecentSeen);
 
 module.exports = router;

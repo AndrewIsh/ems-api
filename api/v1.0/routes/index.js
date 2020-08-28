@@ -8,6 +8,7 @@ const uploadRouter = require('./uploads');
 const tokenRouter = require('./token');
 const activeUserRouter = require('./activeuser');
 const authTypesRouter = require('./authtypes');
+const queryUserRouter = require('./queryuser');
 
 module.exports = {
     queryRouter,
@@ -19,5 +20,6 @@ module.exports = {
     uploadRouter,
     tokenRouter,
     activeUserRouter,
-    authTypesRouter
+    authTypesRouter,
+    queryUserRouter
 };

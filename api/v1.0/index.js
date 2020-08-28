@@ -12,7 +12,8 @@ const {
     uploadRouter,
     tokenRouter,
     activeUserRouter,
-    authTypesRouter
+    authTypesRouter,
+    queryUserRouter
 } = require('./routes');
 
 // Routes to be registered with the router
@@ -27,7 +28,8 @@ const withJwt = [
     { path: 'users', router: userRouter },
     { path: 'roles', router: roleRouter },
     { path: 'upload', router: uploadRouter },
-    { path: 'activeuser', router: activeUserRouter }
+    { path: 'activeuser', router: activeUserRouter },
+    { path: 'queryuser', router: queryUserRouter }
 ];
 
 // Routes that don't require a JWT
