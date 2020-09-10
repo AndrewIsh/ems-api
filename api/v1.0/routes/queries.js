@@ -5,7 +5,8 @@ const querylabel = require('../../../controllers/querylabel');
 const { checkIsInRole } = require('../../../auth/utils');
 const {
     queriesSideEffects,
-    foldersSideEffects
+    foldersSideEffects,
+    labelsSideEffects
 } = require('../../../middleware/side-effects');
 
 router.get(
@@ -51,6 +52,7 @@ router.post(
     (req, res, next) =>
         querylabel.addRemove(req, res, next, 'addLabelToQuery'),
     queriesSideEffects.updatedQueriesToClients,
+    labelsSideEffects.labelCountsToClients
 );
 router.delete(
     '/:query_id/label/:label_id',
@@ -58,6 +60,7 @@ router.delete(
     (req, res, next) =>
         querylabel.addRemove(req, res, next, 'removeLabelFromQuery'),
     queriesSideEffects.updatedQueriesToClients,
+    labelsSideEffects.labelCountsToClients
 );
 
 module.exports = router;
