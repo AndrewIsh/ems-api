@@ -2,6 +2,24 @@ const WebsocketServer = require('../../helpers/WebsocketServer');
 const db = require('../../../ems-db');
 
 const labels = {
+    // Inform all clients, apart from the initiator, that
+    // a label has been created or updated
+    labelToClients: (req, res, next) => {
+        const methodToAction = {
+            POST: 'create',
+            PUT: 'update',
+            DELETE: 'delete'
+        };
+        const { label } = req.wsData;
+        // Send the new message via the websocket
+        WebsocketServer.excludeInitiatorMessage({
+            initiator: req.user.id,
+            subject: 'label',
+            action: methodToAction[req.method],
+            payload: label
+        });
+        next();
+    },
     // Send updated label counts to anyone who is connected
     // and can see the given query
     labelCountsToClients: async (req, res, next) => {

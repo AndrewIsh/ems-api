@@ -22,12 +22,16 @@ const labels = {
                 } else {
                     res.status(req.method === 'POST' ? 201 : 200);
                     res.json(result.rows[0]);
+                    // Make the label available to the websockets
+                    // sending middleware
+                    req.wsData = { label: result.rows[0] };
                     next();
                 }
             })
             .catch((err) => next(err)),
-    deleteLabel: (req, res, next) =>
-        db.resolvers.labels
+    deleteLabel: async (req, res, next) => {
+        const toDelete = await db.resolvers.labels.getLabel(req);
+        return db.resolvers.labels
             .deleteLabel(req)
             .then((result) => {
                 if (result.rowCount === 0) {
@@ -37,6 +41,9 @@ const labels = {
                 } else if (result.rowCount === 1) {
                     res.status(204);
                     res.json({});
+                    // Make the deleted label available to the websockets
+                    // sending middleware
+                    req.wsData = { label: toDelete.rows[0] };
                     next();
                 } else {
                     res.status(500);
@@ -45,6 +52,8 @@ const labels = {
                 }
             })
             .catch((err) => next(err))
+
+    }
 };
 
 module.exports = labels;
