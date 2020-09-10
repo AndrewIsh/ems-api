@@ -28,16 +28,17 @@ const querylabel = {
                 const query = await db.resolvers.queries.getQuery({
                     params: { id: queryId }
                 });
-                const embedded = await helpers.addEmbeds(query);
+                const embedded = await helpers.addEmbeds(query.rows);
                 return embedded[0];
             });
             Promise.all(out).then((toReturn) => {
+                req.wsData = { queries: toReturn };
                 res.status(200);
                 res.json(toReturn);
                 next();
             });
         })
-        .catch((err) => next(err));
+            .catch((err) => next(err));
 
     }
 };

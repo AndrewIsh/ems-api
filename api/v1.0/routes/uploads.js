@@ -13,7 +13,7 @@ router.post(
     checkIsInRole('STAFF', 'CUSTOMER'),
     uploads.handleUpload,
     uploadsSideEffects.newUploadToClients,
-    queriesSideEffects.updatedQueryToClients
+    queriesSideEffects.updatedQueriesToClients
 );
 
 module.exports = router;

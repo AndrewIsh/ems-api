@@ -35,6 +35,14 @@ class WebsocketServer {
             }
         })
     }
+    // Return an array of all connected client user IDs
+    connectedClientUserIds() {
+        const ids = [];
+        this.socketServer.clients.forEach(
+            (client) => ids.push(client.userId)
+        );
+        return ids;
+    }
     // Send a message to all available clients
     // initiator: the ID of the user that initiated the action (if available)
     // subject: The subject of the operation that the action was on (e.g. message)

@@ -3,13 +3,22 @@ const db = require('../../../ems-db');
 const helpers = require('../../helpers/queries');
 
 const queries = {
-    // Inform all clients that a query has been updated
-    updatedQueryToClients: async (req, res, next) => {
-        const { message } = req.wsData;
-        const query = await db.resolvers.queries.getQuery(
-            { params: { id: message.query_id } }
-        );
-        const toSend = await helpers.addEmbeds(query);
+    createdQueryToClients: async (req, res, next) => {
+        const { queries } = req.wsData;
+        // Send the updated query via the websocket
+        // but not to the user who created the message
+        WebsocketServer.excludeInitiatorMessage({
+            initiator: queries[0].initiator,
+            subject: 'query',
+            action: 'create',
+            payload: queries[0]
+        });
+        next();
+    },
+    // Inform all clients that queries have been updated
+    updatedQueriesToClients: async (req, res, next) => {
+        const { queries } = req.wsData;
+        const toSend = await helpers.addEmbeds(queries);
         // Send the updated query via the websocket
         WebsocketServer.broadcastMessage({
             subject: 'query',
@@ -63,18 +72,25 @@ const queries = {
         }
         next();
     },
-    // Send updated unseen counts to anyone who can see
-    // the given query
+    // Send updated unseen counts to anyone who is connected and
+    // can see the given query
     queryUnseenCountsToClients: async (req, res, next) => {
         const { message } = req.wsData;
 
+        const connectedClients = WebsocketServer.connectedClientUserIds();
+
+        // Get the unseen counts for every participant of this query
         const unseenCounts = await db.resolvers.queryuser.getParticipantUnseenCounts({
             query_id: message.query_id
         });
 
-        if (unseenCounts.rowCount > 0) {
+        // Filter the results to only counts involving active clients
+        const withClient = unseenCounts.rows.filter(
+            (row) => connectedClients.indexOf(row.user_id > -1)
+        );
+        if (withClient.length > 0) {
             // Send a message to each user
-            unseenCounts.rows.forEach((row) => {
+            withClient.forEach((row) => {
                 WebsocketServer.onlyInitiatorMessage({
                     initiator: row.user_id,
                     subject: 'unseenCount',

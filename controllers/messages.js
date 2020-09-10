@@ -20,7 +20,7 @@ const messages = {
         // TODO: Ensure the message being edited belongs to the user
         db.resolvers.messages
             .upsertMessage(req)
-            .then((result) => {
+            .then(async (result) => {
                 if (result.rowCount === 0) {
                     res.status(404);
                     res.send();
@@ -28,9 +28,12 @@ const messages = {
                 } else {
                     const message = result.rows[0];
 
-                    // Make the message available to the websockets
-                    // sending middleware
-                    req.wsData = { message };
+                    // Make the message & associated query available
+                    // to the websockets sending middleware
+                    const query = await db.resolvers.queries.getQuery(
+                        { params: { id: message.query_id } }
+                    );
+                    req.wsData = { message, queries: query.rows };
 
                     res.status(req.method === 'POST' ? 201 : 200);
                     res.json(message);
@@ -56,11 +59,17 @@ const messages = {
                         null;
                     return db.resolvers.messages
                         .deleteMessage(req, toDelete.rows[0])
-                        .then(() => {
+                        .then(async () => {
 
                             // Make the necessary data available to the
                             // websockets sending middleware
-                            req.wsData = { message: toDelete.rows[0] }
+                            const query = await db.resolvers.queries.getQuery(
+                                { params: { id: toDelete.rows[0].query_id } }
+                            );
+                            req.wsData = {
+                                message: toDelete.rows[0],
+                                queries: query.rows
+                            };
 
                             // We need to delete any file attachment associated with
                             // this message

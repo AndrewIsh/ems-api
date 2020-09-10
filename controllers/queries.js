@@ -10,11 +10,10 @@ const queries = {
         try {
             // First get the queries we're dealing with
             const queries = await db.resolvers.queries.allQueries(req);
-            const query_ids = queries.rows.map((row) => row.id);
-            // Add the IDs of the queries we retrieved, for the benefit
+            // Add the queries we retrieved, for the benefit
             // of any side effect middleware
-            req.wsData = { query_ids };
-            const toSend = await helpers.addEmbeds(queries);
+            req.wsData = { queries: queries.rows };
+            const toSend = await helpers.addEmbeds(queries.rows);
             res.json(toSend);
             next();
         } catch (err) {
@@ -29,7 +28,7 @@ const queries = {
                 res.send();
                 next();
             } else if (query.rowCount === 1) {
-                const toSend = await helpers.addEmbeds(query);
+                const toSend = await helpers.addEmbeds(query.rows);
                 res.json(toSend[0]);
                 next();
             } else {
@@ -49,14 +48,12 @@ const queries = {
                 res.send();
                 next();
             } else {
-                const toSend = await helpers.addEmbeds(result);
+                const toSend = await helpers.addEmbeds(result.rows);
                 res.status(req.method === 'POST' ? 201 : 200);
                 res.json(toSend[0]);
-                // Make the query available to the websockets
+                // Make the queries available to the websockets
                 // sending middleware
-                req.wsData = {
-                    query: toSend[0]
-                };
+                req.wsData = { queries: toSend };
                 next();
             }
         } catch (err) {
@@ -98,7 +95,8 @@ const queries = {
                 const resultArray = results.map(
                     (thisResult) => thisResult.value.rows[0]
                 );
-                const embedded = await helpers.addEmbeds({ rows: resultArray });
+                const embedded = await helpers.addEmbeds(resultArray);
+                req.wsData = { queries: embedded };
                 res.status(200);
                 res.json(embedded);
                 next();

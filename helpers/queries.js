@@ -2,12 +2,15 @@ const db = require('../../ems-db');
 
 const queries = {
     addEmbeds: async (queries) => {
-        // We need the IDs of all queries we received
-        const query_ids = queries.rows.map(query => query.id);
         // Don't proceed if we don't need to
-        if (query_ids.length === 0) {
-            return [];    
+        if (queries.length === 0) {
+            return [];
+        } else if (queries[0].hasOwnProperty('latestMessage')) {
+            // These queries already have embeds
+            return queries;
         }
+        // We need the IDs of all queries we received
+        const query_ids = queries.map(query => query.id);
         // Now get the initiators for all the queries we've
         // received, we also receive their associated query ID
         const initiators = await db.resolvers.queries.initiators(
@@ -26,7 +29,7 @@ const queries = {
             query_ids
         );
         // Now we have everything, we can bundle it all up together
-        return queries.rows.map(query => {
+        return queries.map(query => {
             // The initiator for this query
             const queryInitiator = initiators.rows.find(
                 init => init.id === query.id
