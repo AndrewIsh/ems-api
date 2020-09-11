@@ -49,6 +49,11 @@ const queries = {
                 next();
             } else {
                 const toSend = await helpers.addEmbeds(result.rows);
+                // Add queryuser entries for any users that need it
+                await db.resolvers.queryuser.upsertQueryUsers({
+                    query_id: toSend[0].id,
+                    creator: req.user.id
+                });
                 res.status(req.method === 'POST' ? 201 : 200);
                 res.json(toSend[0]);
                 // Make the queries available to the websockets

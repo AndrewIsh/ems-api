@@ -27,6 +27,17 @@ const queries = {
         });
         next();
     },
+    // Send the most recent seen counts to all connected clients
+    mostRecentSeenToAll: async (req, res, next) => {
+        const allClients = WebsocketServer.connectedClientUserIds();
+        allClients.forEach((id) => {
+            queries.mostRecentSeenToClient(
+                { user: { id } },
+                null,
+                next
+            )
+        });
+    },
     // Send updated most recent seen to a user
     mostRecentSeenToClient: async (req, res, next) => {
         const mostRecentSeen = await db.resolvers.queryuser.getMostRecentSeen(req.user);
@@ -83,7 +94,6 @@ const queries = {
         const unseenCounts = await db.resolvers.queryuser.getParticipantUnseenCounts({
             query_id: message.query_id
         });
-
         // Filter the results to only counts involving active clients
         const withClient = unseenCounts.rows.filter(
             (row) => connectedClients.indexOf(row.user_id > -1)

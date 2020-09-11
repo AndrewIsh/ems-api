@@ -31,7 +31,11 @@ const uploads = {
                 const query = await db.resolvers.queries.getQuery(
                     { params: { id: req.body.queryId } }
                 );
-                req.wsData = { uploads: toSend, queries: query.rows }
+                req.wsData = {
+                    message: toSend[0],
+                    uploads: toSend,
+                    queries: query.rows
+                };
                 res.send(toSend)
                 next();
             }

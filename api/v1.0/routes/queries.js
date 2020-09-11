@@ -22,7 +22,8 @@ router.post(
     checkIsInRole('STAFF', 'CUSTOMER'),
     queries.upsertQuery,
     queriesSideEffects.createdQueryToClients,
-    foldersSideEffects.folderCountsToClients
+    foldersSideEffects.folderCountsToClients,
+    queriesSideEffects.mostRecentSeenToAll
 );
 router.put(
     '/',

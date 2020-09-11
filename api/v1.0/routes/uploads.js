@@ -5,7 +5,8 @@ const { checkIsInRole } = require('../../../auth/utils');
 
 const {
     uploadsSideEffects,
-    queriesSideEffects
+    queriesSideEffects,
+    foldersSideEffects
 } = require('../../../middleware/side-effects');
 
 router.post(
@@ -13,7 +14,9 @@ router.post(
     checkIsInRole('STAFF', 'CUSTOMER'),
     uploads.handleUpload,
     uploadsSideEffects.newUploadToClients,
-    queriesSideEffects.updatedQueriesToClients
+    queriesSideEffects.updatedQueriesToClients,
+    queriesSideEffects.queryUnseenCountsToClients,
+    foldersSideEffects.folderCountsToClients
 );
 
 module.exports = router;
