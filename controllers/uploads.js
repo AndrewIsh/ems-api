@@ -26,7 +26,12 @@ const uploads = {
                 });
                 const updated = await Promise.all(dbUpdates);
                 const toSend = updated.map(update => update.rows[0]);
-                req.wsData = { uploads: toSend }
+                // Make the associated query available to side-effects
+                // middleware
+                const query = await db.resolvers.queries.getQuery(
+                    { params: { id: req.body.queryId } }
+                );
+                req.wsData = { uploads: toSend, queries: query.rows }
                 res.send(toSend)
                 next();
             }
