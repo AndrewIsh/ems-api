@@ -1,4 +1,4 @@
-const AuthCache = require('../../helpers/AuthCache');
+const AuthCache = require('../../classes/AuthCache');
 
 jest.mock('bcrypt', () => ({
     hashSync: jest.fn().mockImplementation((toHash, rounds) => `${toHash}${rounds}`),

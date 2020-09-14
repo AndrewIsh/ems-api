@@ -1,5 +1,5 @@
 const WebSocket = require('ws');
-const { verifyJwt } = require('./token');
+const { verifyJwt } = require('../helpers/token');
 
 class WebsocketServer {
     init(server) {

@@ -1,4 +1,4 @@
-const WebsocketServer = require('../../helpers/WebsocketServer');
+const WebsocketServer = require('../../classes/WebsocketServer');
 const db = require('../../../ems-db');
 
 const folders = {

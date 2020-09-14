@@ -1,6 +1,6 @@
 const db = require('../ems-db');
 const ems = require('./app');
-const WebsocketServer = require('./helpers/WebsocketServer');
+const WebsocketServer = require('./classes/WebsocketServer');
 
 // Make sure the database is fully up to date before
 // starting the API

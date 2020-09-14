@@ -4,7 +4,7 @@ const passport = require('passport');
 const token = require('../../helpers/token');
 
 // The AuthCache class that token.js depends on
-const AuthCache = require('../../helpers/AuthCache');
+const AuthCache = require('../../classes/AuthCache');
 const { postJwtAuth, doRefresh } = require('../../helpers/token');
 
 const mockToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyMyIsImlhdCI6MTU5NzMwODYwOSwiZXhwIjoxNTk3MzA5NTA5fQ.hZoxIe79mhHIgC-ihSitGPUw9R6ViRFprhh1gn-ymt4';

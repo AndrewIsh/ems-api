@@ -1,4 +1,4 @@
-const WebsocketServer = require('../../helpers/WebsocketServer');
+const WebsocketServer = require('../../classes/WebsocketServer');
 
 const messages = {
     // Inform all clients, apart from the initiator, that

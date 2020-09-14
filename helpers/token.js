@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const passport = require('passport');
 const db = require('../../ems-db');
 
-const AuthCache = require('../helpers/AuthCache');
+const AuthCache = require('../classes/AuthCache');
 
 // Given an Express request object, extract the JWT
 const getTokenFromRequest = (req) => {
