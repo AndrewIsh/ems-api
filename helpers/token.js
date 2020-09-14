@@ -28,11 +28,7 @@ const generateJwt = (userId) => {
 
 // Receive a JWT payload and verify it
 const verifyJwt = (payload) => {
-    try {
-        return jwt.verify(payload, process.env.JWT_SECRET);
-    } catch (err) {
-        throw err;
-    }
+    return jwt.verify(payload, process.env.JWT_SECRET);
 };
 
 // Generate and store a refresh token

@@ -26,7 +26,7 @@ const querylabel = {
         // When all DB operations are complete, get all updated queries
         // and return them
         return Promise.all(updates)
-            .then(async (responses) => {
+            .then(async () => {
                 const out = queryLabels.map(async (queryId) => {
                     const query = await db.resolvers.queries.getQuery({
                         params: { id: queryId }

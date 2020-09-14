@@ -38,10 +38,11 @@ const Saml = (app) => {
         db.resolvers.users.allUsers({ query: {} }).then((allUsers) => {
             // Note: This is potentially a slow operation as we're performing a
             // *synchronous* compare on, potentially, every user. Since
-            // these synchronous calls block the main thread, we may want to switch
-            // to the async approach discussed in the bcrypt module's docs if this
-            // becomes problematic. However, since this only gets called when a user
-            // logs in, it's not going to be heavily hit
+            // these synchronous calls block the main thread, we may want to
+            // switch to the async approach discussed in the bcrypt module's
+            // docs if this becomes problematic. However, since this only
+            // gets called when a user logs in, it's not going to be
+            // heavily hit
             const found = allUsers.rows.find((user) =>
                 bcrypt.compareSync(uid, user.provider_id)
             );
@@ -85,8 +86,9 @@ const Saml = (app) => {
             failureRedirect: '/login'
         }),
         (req, res) => {
-            // Generate a refresh token and redirect the useragent back to the client,
-            // at which point they will use the refresh token to obtain a JWT
+            // Generate a refresh token and redirect the useragent back to
+            // the client, at which point they will use the refresh token
+            // to obtain a JWT
             const token = generateRefresh(req.user);
             addRefreshToken(res, token);
             const port =

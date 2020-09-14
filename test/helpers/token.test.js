@@ -1,11 +1,9 @@
-const passport = require('passport');
-
 // The thing we're testing
 const token = require('../../helpers/token');
 
 // The AuthCache class that token.js depends on
 const AuthCache = require('../../classes/AuthCache');
-const { postJwtAuth, doRefresh } = require('../../helpers/token');
+const { doRefresh } = require('../../helpers/token');
 
 const mockToken =
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyMyIsImlhdCI6MTU5NzMwODYwOSwiZXhwIjoxNTk3MzA5NTA5fQ.hZoxIe79mhHIgC-ihSitGPUw9R6ViRFprhh1gn-ymt4';
@@ -192,7 +190,9 @@ describe('doRefresh', () => {
     it('when generateRefresh fails, should form res correctly', () => {
         // Temporarily mock generateJwt so we can make it fail
         jest.doMock('../../helpers/token', () => ({
-            generateJwt: jest.fn().mockImplementation(() => { throw new Error; })
+            generateJwt: jest.fn().mockImplementation(
+                () => { throw new Error; }
+            )
         }));
         doRefresh(goodMockRequest, mockRes, mockNext);
         expect(resStatus).toBeCalledWith(401);

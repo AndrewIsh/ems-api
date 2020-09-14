@@ -71,8 +71,8 @@ const messages = {
                                 queries: query.rows
                             };
 
-                            // We need to delete any file attachment associated with
-                            // this message
+                            // We need to delete any file attachment
+                            // associated with this message
                             if (delFilename) {
                                 fs.unlinkSync(
                                     `${process.env.UPLOADS_DIR}/${delFilename}`

@@ -68,8 +68,8 @@ describe('QueryLabels', () => {
         jest.clearAllMocks();
     });
     describe('addRemove (addLabelToQuery)', () => {
-        // Because querylabel.addRemove is returns a promise, we need to await it
-        // before we can test what it did.
+        // Because querylabel.addRemove is returns a promise,
+        // we need to await it before we can test what it did.
         beforeEach(async () => {
             await querylabel.addRemove(
                 {
@@ -110,8 +110,8 @@ describe('QueryLabels', () => {
 
     describe('addRemove (removeLabelFromQuery)', () => {
         describe('successful calls', () => {
-            // Because querylabel.addRemove is returns a promise, we need to await it
-            // before we can test what it did.
+            // Because querylabel.addRemove is returns a promise, we need
+            // to await it before we can test what it did.
             beforeEach(async () => {
                 await querylabel.addRemove(
                     {
@@ -151,8 +151,8 @@ describe('QueryLabels', () => {
         });
 
         describe('failed calls', () => {
-            // Because querylabel.addRemove is returns a promise, we need to await it
-            // before we can test what it did.
+            // Because querylabel.addRemove is returns a promise, we need to
+            // await it before we can test what it did.
             beforeEach(async () => {
                 await querylabel.addRemove(
                     {

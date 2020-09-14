@@ -25,7 +25,7 @@ jest.mock('passport', () => ({
 describe('serializeCallback', () => {
     let mockCallback = {};
     beforeEach(() => {
-        mockCallback = jest.fn().mockImplementation((isNull, user) => {});
+        mockCallback = jest.fn().mockImplementation(() => { });
     });
     it('should call the passed callback with null and the ID of the passed user', () => {
         utils.serializeCallback({ provider_id: 1 }, mockCallback);
@@ -36,7 +36,7 @@ describe('serializeCallback', () => {
 describe('deserializeCallback', () => {
     let mockCallback = {};
     beforeEach(() => {
-        mockCallback = jest.fn().mockImplementation((isNull, user) => {});
+        mockCallback = jest.fn().mockImplementation(() => { });
     });
     it('should call the passed callback with the object it gets back from getUser', async () => {
         await utils.deserializeCallback({ id: 1 }, mockCallback);

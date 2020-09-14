@@ -91,9 +91,10 @@ const queries = {
         return Promise.allSettled(updates).then(async (results) => {
             // Prepare a response containing the updated query objects
             // We're not specifically handling updates that failed here.
-            // The could be idenfitied by looking at result.status === 'rejected'
-            // but what to do in that situation? Needs more thought, as it stands
-            // any updates that fail will just remain unchanged in the UI
+            // The could be idenfitied by looking at
+            // result.status === 'rejected' but what to do in that
+            // situation ? Needs more thought, as it stands any updates
+            // that fail will just remain unchanged in the UI
             //
             // Just get the query objects
             const resultArray = results.map(

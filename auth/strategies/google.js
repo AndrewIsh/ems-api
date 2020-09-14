@@ -59,13 +59,14 @@ const Google = (app) => {
 
     // ...and returning from Google
     app.get(
-        `/auth/google/callback`,
+        '/auth/google/callback',
         passport.authenticate('google', {
             failureRedirect: '/login'
         }),
         (req, res) => {
-            // Generate a refresh token and redirect the useragent back to the client,
-            // at which point they will use the refresh token to obtain a JWT
+            // Generate a refresh token and redirect the useragent back to
+            // the client, at which point they will use the refresh token
+            // to obtain a JWT
             const token = generateRefresh(req.user);
             addRefreshToken(res, token);
             const port =

@@ -37,9 +37,10 @@ module.exports = {
 
         // Middleware
         //
-        // CORS - here we are allowing the client to access the Authorization header
-        // We should only need CORS when in development, we want to not allow CORS
-        // when in production as a partial mitigation against CSRF
+        // CORS - here we are allowing the client to access the Authorization
+        // header. We should only need CORS when in development, we want to
+        // not allow CORS when in production as a partial mitigation against
+        // CSRF
         if (process.env.NODE_ENV === 'development') {
             app.use(
                 cors((req, cb) =>

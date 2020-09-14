@@ -81,7 +81,7 @@ jest.mock('../../../ems-db', () => ({
                     });
                 } else {
                     // Return an array containing 3 promise rejections
-                    return [1, 2, 3].map((passedItem) => {
+                    return [1, 2, 3].map(() => {
                         return new Promise((resolve, reject) => {
                             return reject(new Error('Rejected'));
                         });
@@ -89,7 +89,7 @@ jest.mock('../../../ems-db', () => ({
                 }
             }),
             // A mock DB resolver for initiators that returns a mock initiator
-            initiators: jest.fn((passed, shouldHaveInitiator) => {
+            initiators: jest.fn((passed) => {
                 if (passed) {
                     return new Promise((resolve) => {
                         return resolve({ rows: [{ id: 1, initiator: 1 }] });

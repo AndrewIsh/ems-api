@@ -4,8 +4,6 @@ const roles = require('../../controllers/roles');
 // The DB module that roles.js depends on (which we're about to mock)
 const db = require('../../../ems-db');
 
-const mockResult = { one: 'one' };
-
 // Mock ems-db
 jest.mock('../../../ems-db', () => ({
     resolvers: {

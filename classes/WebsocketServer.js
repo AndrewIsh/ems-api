@@ -2,7 +2,7 @@ const WebSocket = require('ws');
 const { verifyJwt } = require('../helpers/token');
 
 class WebsocketServer {
-    init(server) {
+    init() {
         const { WS_PORT } = process.env;
 
         // Initialise the server
@@ -47,9 +47,11 @@ class WebsocketServer {
     }
     // Send a message to all available clients
     // initiator: the ID of the user that initiated the action (if available)
-    // subject: The subject of the operation that the action was on (e.g. message)
+    // subject: The subject of the operation that the action was on
+    //          (e.g.message)
     // action: The action that was performed on the subject (e.g. update)
-    // payload: Any payload resulting from the action on the subject (e.g. updated message)
+    // payload: Any payload resulting from the action on the subject
+    //          (e.g.updated message)
     broadcastMessage({ initiator, subject, action, payload }) {
         this.socketServer.clients.forEach((client) => {
             if (client.readyState === WebSocket.OPEN) {

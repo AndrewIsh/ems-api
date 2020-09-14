@@ -5,7 +5,7 @@ const queries = {
         // Don't proceed if we don't need to
         if (queries.length === 0) {
             return [];
-        } else if (queries[0].hasOwnProperty('latestMessage')) {
+        } else if (Object.prototype.hasOwnProperty.call(queries[0], 'latestMessage')) {
             // These queries already have embeds
             return queries;
         }

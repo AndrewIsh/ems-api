@@ -37,8 +37,8 @@ describe('QueryUsers', () => {
         const next = jest.fn();
 
         // Make the === 0 call
-        // Here we're telling our mocked updateMostRecentSeen DB resolver above to
-        // pretend it's not inserted a user query relationship
+        // Here we're telling our mocked updateMostRecentSeen DB resolver
+        // above to pretend it's not inserted a user query relationship
         queryuser.updateMostRecentSeen({ rowCount: 0 }, res, next);
 
         it('should call the DB resolver', (done) => {
@@ -61,8 +61,8 @@ describe('QueryUsers', () => {
         });
 
         // Make the == 1 call
-        // Here we're telling our mocked updateMostRecentSeen DB resolver above to
-        // pretend it's successfully updated 1 user query relationship
+        // Here we're telling our mocked updateMostRecentSeen DB resolver
+        // above to pretend it's successfully updated 1 user query relationship
         // PUT:
         queryuser.updateMostRecentSeen(
             { rowCount: 1, rows: [mockResult] },
@@ -84,8 +84,8 @@ describe('QueryUsers', () => {
         });
 
         // Make the > 1 call
-        // Here we're telling our mocked updateMostRecentSeen DB resolver above to
-        // pretend it's deleted > 1 rows which shouldn't ever happen
+        // Here we're telling our mocked updateMostRecentSeen DB resolver
+        // above to pretend it's deleted > 1 rows which shouldn't ever happen
         // POST:
         queryuser.updateMostRecentSeen({ rowCount: 2 }, res, next);
 
