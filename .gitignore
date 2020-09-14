@@ -104,3 +104,6 @@ dist
 # Custom EMS stuff
 ecosystem.config.js
 uploads/*
+
+# IDE specific settings
+/.vscode
