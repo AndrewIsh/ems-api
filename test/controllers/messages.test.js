@@ -87,8 +87,10 @@ describe('Messages', () => {
 
         // Make the call
         messages.getMessages(
-            { rows: [{ ...mockResult, creator_id: 1 }] }
-        , res, next);
+            { rows: [{ ...mockResult, creator_id: 1 }] },
+            res,
+            next
+        );
 
         it('should call the DB resolver', (done) => {
             expect(db.resolvers.messages.allMessages).toHaveBeenCalled();
@@ -121,7 +123,7 @@ describe('Messages', () => {
         // Make the === 0 call
         // Here we're telling our mocked upsertMessage DB resolver above to
         // pretend it's not inserted/updated a message
-        messages.upsertMessage({ rowCount: 0 , rows: []}, res, next);
+        messages.upsertMessage({ rowCount: 0, rows: [] }, res, next);
 
         it('should call the DB resolver', (done) => {
             expect(db.resolvers.messages.upsertMessage).toHaveBeenCalled();
@@ -144,7 +146,11 @@ describe('Messages', () => {
         // Here we're telling our mocked upsertMessage DB resolver above to
         // pretend it's successfully inserted/updated a message
         // POST:
-        messages.upsertMessage({ rowCount: 1, rows: [mockResult], method: 'POST' }, res, next);
+        messages.upsertMessage(
+            { rowCount: 1, rows: [mockResult], method: 'POST' },
+            res,
+            next
+        );
 
         it('rowCount > 0 & method === POST should call status(), passing 201', (done) => {
             expect(res.status).toBeCalledWith(201);
@@ -225,7 +231,11 @@ describe('Messages', () => {
         // Make the === 1 call with an attachment
         // Here we're telling our mocked deleteMessage DB resolver above to
         // pretend it has deleted a message with an attachment
-        messages.deleteMessage({ rowCount: 1, rows: [{filename: 'myfile.txt'}] }, res, next);
+        messages.deleteMessage(
+            { rowCount: 1, rows: [{ filename: 'myfile.txt' }] },
+            res,
+            next
+        );
 
         it('rowCount > 0 should call json()', (done) => {
             expect(res.json).toBeCalled();

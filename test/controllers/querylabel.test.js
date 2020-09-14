@@ -9,7 +9,7 @@ const mockResult = { one: 'one' };
 // The querylabel controller calls our addEmbeds helper, so we need
 // to mock it
 jest.mock('../../helpers/queries', () => ({
-    addEmbeds: jest.fn(() => Promise.resolve([{id: 1}]))
+    addEmbeds: jest.fn(() => Promise.resolve([{ id: 1 }]))
 }));
 
 // Mock ems-db
@@ -28,7 +28,6 @@ jest.mock('../../../ems-db', () => ({
                         return reject(new Error('Rejected'));
                     });
                 }
-
             })
         },
         querylabel: {
@@ -73,7 +72,11 @@ describe('QueryLabels', () => {
         // before we can test what it did.
         beforeEach(async () => {
             await querylabel.addRemove(
-                { rowCount: 1, params: { query_id: '1,2,3', label_id: '5' }, rows: [mockResult] },
+                {
+                    rowCount: 1,
+                    params: { query_id: '1,2,3', label_id: '5' },
+                    rows: [mockResult]
+                },
                 res,
                 next,
                 'addLabelToQuery'
@@ -111,7 +114,11 @@ describe('QueryLabels', () => {
             // before we can test what it did.
             beforeEach(async () => {
                 await querylabel.addRemove(
-                    { rowCount: 1, params: { query_id: '1,2,3', label_id: '5' }, rows: [mockResult] },
+                    {
+                        rowCount: 1,
+                        params: { query_id: '1,2,3', label_id: '5' },
+                        rows: [mockResult]
+                    },
                     res,
                     next,
                     'removeLabelFromQuery'
@@ -148,7 +155,11 @@ describe('QueryLabels', () => {
             // before we can test what it did.
             beforeEach(async () => {
                 await querylabel.addRemove(
-                    { rowCount: 1, params: { query_id: '1138', label_id: '5' }, rows: [mockResult] },
+                    {
+                        rowCount: 1,
+                        params: { query_id: '1138', label_id: '5' },
+                        rows: [mockResult]
+                    },
                     res,
                     next,
                     'removeLabelFromQuery'

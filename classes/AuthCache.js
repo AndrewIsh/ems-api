@@ -31,8 +31,9 @@ class AuthCache {
     // becomes problematic. However, since this only gets called when a user
     // logs out or refreshes their token, it's not going to be heavily hit
     findByToken(token) {
-        return Object.keys(this.cache)
-            .find((key) => bcrypt.compareSync(token, this.cache[key].token));
+        return Object.keys(this.cache).find((key) =>
+            bcrypt.compareSync(token, this.cache[key].token)
+        );
     }
 }
 

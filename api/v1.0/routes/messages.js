@@ -27,7 +27,8 @@ router.put(
     queriesSideEffects.updatedQueriesToClients,
     foldersSideEffects.folderCountsToClients
 );
-router.delete('/:id',
+router.delete(
+    '/:id',
     checkIsInRole('STAFF', 'CUSTOMER'),
     messages.deleteMessage,
     messagesSideEffects.deletedMessageToClients,

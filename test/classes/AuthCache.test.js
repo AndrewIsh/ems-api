@@ -1,24 +1,26 @@
 const AuthCache = require('../../classes/AuthCache');
 
 jest.mock('bcrypt', () => ({
-    hashSync: jest.fn().mockImplementation((toHash, rounds) => `${toHash}${rounds}`),
-    compareSync: jest.fn().mockImplementation(
-        (findMe) => findMe === '218710' ? true : false
-    )
+    hashSync: jest
+        .fn()
+        .mockImplementation((toHash, rounds) => `${toHash}${rounds}`),
+    compareSync: jest
+        .fn()
+        .mockImplementation((findMe) => (findMe === '218710' ? true : false))
 }));
 
 describe('constructor', () => {
     it('runs the constructor', () => {
         expect(AuthCache).toHaveProperty('cache');
         expect(AuthCache.cache).toEqual({});
-    })
+    });
 });
 
 describe('store', () => {
     it('stores a token in the cache', () => {
         AuthCache.store({ userId: 'Lando', newToken: '2187' });
-        expect(AuthCache.cache).toEqual({ Lando: '218710' })
-    })
+        expect(AuthCache.cache).toEqual({ Lando: '218710' });
+    });
 });
 
 describe('hashToken', () => {

@@ -11,9 +11,7 @@ const mockResult = {
     latestMessage: {
         query_id: 1
     },
-    participants: [
-        1
-    ]
+    participants: [1]
 };
 
 // Mock ems-db
@@ -83,7 +81,7 @@ jest.mock('../../../ems-db', () => ({
                     });
                 } else {
                     // Return an array containing 3 promise rejections
-                    return [1,2,3].map((passedItem) => {
+                    return [1, 2, 3].map((passedItem) => {
                         return new Promise((resolve, reject) => {
                             return reject(new Error('Rejected'));
                         });
@@ -107,7 +105,9 @@ jest.mock('../../../ems-db', () => ({
             participants: jest.fn((passed) => {
                 if (passed) {
                     return new Promise((resolve) => {
-                        return resolve({ rows: [{ query_id: 1, creator_id: 1 }] });
+                        return resolve({
+                            rows: [{ query_id: 1, creator_id: 1 }]
+                        });
                     });
                 } else {
                     return new Promise((resolve, reject) => {
@@ -133,7 +133,9 @@ jest.mock('../../../ems-db', () => ({
             labels: jest.fn((passed) => {
                 if (passed) {
                     return new Promise((resolve) => {
-                        return resolve({ rows: [{ query_id: 1, label_id: 1 }] });
+                        return resolve({
+                            rows: [{ query_id: 1, label_id: 1 }]
+                        });
                     });
                 } else {
                     return new Promise((resolve, reject) => {
@@ -245,7 +247,7 @@ describe('Queries', () => {
         // Make the === 1 call
         // Here we're telling our mocked getQuery DB resolver above to
         // pretend it's returning 1 result
-        queries.getQuery({ rowCount: 1, rows: [{id: 1}] }, res, next);
+        queries.getQuery({ rowCount: 1, rows: [{ id: 1 }] }, res, next);
 
         it('rowCount === 1 should call json(), passing the result', (done) => {
             expect(res.json).toBeCalledWith(response);
@@ -314,7 +316,11 @@ describe('Queries', () => {
         // Here we're telling our mocked upsertQuery DB resolver above to
         // pretend it's successfully inserted/updated a query
         // POST:
-        queries.upsertQuery({ rowCount: 1, rows: [mockResult], method: 'POST' }, res, next);
+        queries.upsertQuery(
+            { rowCount: 1, rows: [mockResult], method: 'POST' },
+            res,
+            next
+        );
 
         it('rowCount > 0 & method === POST should call status(), passing 201', (done) => {
             expect(res.status).toBeCalledWith(201);
@@ -421,11 +427,15 @@ describe('Queries', () => {
 
     describe('updateBulk', () => {
         beforeEach(async () => {
-            await queries.updateBulk([
-                { rowCount: 1, rows: [mockResult], method: 'PUT' },
-                { rowCount: 1, rows: [mockResult], method: 'PUT' },
-                { rowCount: 1, rows: [mockResult], method: 'PUT' },
-            ], res, next);
+            await queries.updateBulk(
+                [
+                    { rowCount: 1, rows: [mockResult], method: 'PUT' },
+                    { rowCount: 1, rows: [mockResult], method: 'PUT' },
+                    { rowCount: 1, rows: [mockResult], method: 'PUT' }
+                ],
+                res,
+                next
+            );
         });
         // res.json is used, so we should mock that
         const res = { json: jest.fn(), send: jest.fn(), status: jest.fn() };
@@ -444,7 +454,29 @@ describe('Queries', () => {
             done();
         });
         it('json() should be called, passing the 3 results', (done) => {
-            const mockResults = [{ "id": 1, "initiator": 1, "labels": [1], "latestMessage": { "query_id": 1 }, "participants": [1] }, { "id": 1, "initiator": 1, "labels": [1], "latestMessage": { "query_id": 1 }, "participants": [1] }, { "id": 1, "initiator": 1, "labels": [1], "latestMessage": { "query_id": 1 }, "participants": [1] }];
+            const mockResults = [
+                {
+                    id: 1,
+                    initiator: 1,
+                    labels: [1],
+                    latestMessage: { query_id: 1 },
+                    participants: [1]
+                },
+                {
+                    id: 1,
+                    initiator: 1,
+                    labels: [1],
+                    latestMessage: { query_id: 1 },
+                    participants: [1]
+                },
+                {
+                    id: 1,
+                    initiator: 1,
+                    labels: [1],
+                    latestMessage: { query_id: 1 },
+                    participants: [1]
+                }
+            ];
             expect(res.json).toBeCalledWith(mockResults);
             done();
         });

@@ -7,15 +7,14 @@ const folders = {
     folderCountsToClients: async (req, res, next) => {
         // Get the user objects associated with connected clients
         const activeClientIds = WebsocketServer.connectedClientUserIds();
-        const activeClients = await db.resolvers.users.allUsers(
-            { query: { user_ids: activeClientIds.join('_') } }
-        );
+        const activeClients = await db.resolvers.users.allUsers({
+            query: { user_ids: activeClientIds.join('_') }
+        });
 
         activeClients.rows.forEach((client) => {
             // We don't await here because these can be sent async
-            db.resolvers.folders.folderCounts(
-                { user: client }
-            )
+            db.resolvers.folders
+                .folderCounts({ user: client })
                 .then((folderCounts) => {
                     WebsocketServer.onlyInitiatorMessage({
                         initiator: client.id,

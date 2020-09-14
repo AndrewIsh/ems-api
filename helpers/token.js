@@ -23,7 +23,7 @@ const generateJwt = (userId) => {
     const expiresIn = 900;
     return jwt.sign({ sub: userId }, process.env.JWT_SECRET, {
         expiresIn
-    })
+    });
 };
 
 // Receive a JWT payload and verify it
@@ -31,7 +31,7 @@ const verifyJwt = (payload) => {
     try {
         return jwt.verify(payload, process.env.JWT_SECRET);
     } catch (err) {
-        throw (err);
+        throw err;
     }
 };
 
@@ -40,7 +40,7 @@ const generateRefresh = ({ id, role_code }) => {
     const newToken = v4();
     AuthCache.store({ userId: id, newToken, role: role_code });
     return newToken;
-}
+};
 
 // Find and delete a refresh token
 const deleteRefresh = (token) => {
@@ -78,7 +78,7 @@ const postJwtAuth = (req, res, next) => {
             next();
         }
     })(req, res, next);
-}
+};
 
 // Middleware to handle refresh tokens
 // Receive a refresh token which may or may not be valid
@@ -95,7 +95,9 @@ const doRefresh = async (req, res, next) => {
         const userId = AuthCache.findByToken(currentToken);
         if (userId) {
             try {
-                const userResult = await db.resolvers.users.getUser({ params: { id: userId } });
+                const userResult = await db.resolvers.users.getUser({
+                    params: { id: userId }
+                });
                 if (userResult.rowCount !== 1) {
                     throw 'Could not find user';
                 }
@@ -105,14 +107,13 @@ const doRefresh = async (req, res, next) => {
                 res.set('Authorization', `Bearer ${jwt}`);
                 addRefreshToken(res, newRefresh);
                 res.status(200);
-                res.send()
+                res.send();
                 next();
             } catch (err) {
                 res.status(401);
                 res.send(err || 'Unable to find user from token');
                 next();
             }
-
         } else {
             res.status(401);
             res.send('Invalid refresh token');

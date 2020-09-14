@@ -38,19 +38,14 @@ const withoutJwt = [
     { path: 'authtypes', router: authTypesRouter }
 ];
 
-withJwt.forEach(
-    (aRoute) => router.use(
+withJwt.forEach((aRoute) =>
+    router.use(
         `/${aRoute.path}`,
         (req, res, next) => postJwtAuth(req, res, next),
         aRoute.router
     )
 );
 
-withoutJwt.forEach(
-    (uRoute) => router.use(
-        `/${uRoute.path}`,
-        uRoute.router
-    )
-);
+withoutJwt.forEach((uRoute) => router.use(`/${uRoute.path}`, uRoute.router));
 
 module.exports = router;

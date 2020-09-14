@@ -51,8 +51,7 @@ const labels = {
                     next();
                 }
             })
-            .catch((err) => next(err))
-
+            .catch((err) => next(err));
     }
 };
 

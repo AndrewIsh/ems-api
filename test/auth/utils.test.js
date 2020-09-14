@@ -25,7 +25,7 @@ jest.mock('passport', () => ({
 describe('serializeCallback', () => {
     let mockCallback = {};
     beforeEach(() => {
-        mockCallback = jest.fn().mockImplementation((isNull, user) => { });
+        mockCallback = jest.fn().mockImplementation((isNull, user) => {});
     });
     it('should call the passed callback with null and the ID of the passed user', () => {
         utils.serializeCallback({ provider_id: 1 }, mockCallback);
@@ -36,15 +36,15 @@ describe('serializeCallback', () => {
 describe('deserializeCallback', () => {
     let mockCallback = {};
     beforeEach(() => {
-        mockCallback = jest.fn().mockImplementation((isNull, user) => { });
+        mockCallback = jest.fn().mockImplementation((isNull, user) => {});
     });
     it('should call the passed callback with the object it gets back from getUser', async () => {
         await utils.deserializeCallback({ id: 1 }, mockCallback);
-        expect(mockCallback).toBeCalledWith(null, {params: {id: 1}});
+        expect(mockCallback).toBeCalledWith(null, { params: { id: 1 } });
     });
     it('should catch when the call to getUser fails', async () => {
         await utils.deserializeCallback({ id: null }, mockCallback);
-        expect(mockCallback).toBeCalledWith({params: {id: null}}, null);
+        expect(mockCallback).toBeCalledWith({ params: { id: null } }, null);
     });
 });
 
@@ -69,14 +69,16 @@ describe('getAvailableAuthtypes', () => {
         process.env.GOOGLE_OAUTH_CLIENT_ID = '123';
         process.env.GOOGLE_OAUTH_CLIENT_SECRET = '456';
         const available = utils.getAvailableAuthtypes();
-        expect(available).toEqual([{"id": "google", "name": "Google"}]);
+        expect(available).toEqual([{ id: 'google', name: 'Google' }]);
     });
     it('should return just SAML when only SAML config is specified', () => {
         process.env.SAML_ENTRY_POINT = '123';
         process.env.SAML_ISSUER_STRING = '456';
         process.env.SAML_LOGOUT_ENDPOINT = '789';
         const available = utils.getAvailableAuthtypes();
-        expect(available).toEqual([{"id": "saml", "name": "SAML", logoutUrl: '789'}]);
+        expect(available).toEqual([
+            { id: 'saml', name: 'SAML', logoutUrl: '789' }
+        ]);
     });
     it('should return Google & SAML when both configs are specified', () => {
         process.env.GOOGLE_OAUTH_CLIENT_ID = '123';
@@ -86,8 +88,8 @@ describe('getAvailableAuthtypes', () => {
         process.env.SAML_LOGOUT_ENDPOINT = '789';
         const available = utils.getAvailableAuthtypes();
         expect(available.sort()).toEqual([
-            { "id": "google", "name": "Google" },
-            { "id": "saml", "name": "SAML", logoutUrl: '789' }
+            { id: 'google', name: 'Google' },
+            { id: 'saml', name: 'SAML', logoutUrl: '789' }
         ]);
     });
 });

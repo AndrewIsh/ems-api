@@ -30,9 +30,9 @@ const messages = {
 
                     // Make the message & associated query available
                     // to the websockets sending middleware
-                    const query = await db.resolvers.queries.getQuery(
-                        { params: { id: message.query_id } }
-                    );
+                    const query = await db.resolvers.queries.getQuery({
+                        params: { id: message.query_id }
+                    });
                     req.wsData = { message, queries: query.rows };
 
                     res.status(req.method === 'POST' ? 201 : 200);
@@ -46,7 +46,8 @@ const messages = {
         //
         // First get the message that is about to be deleted and
         // check if it has a file attachment
-        db.resolvers.messages.getMessage(req)
+        db.resolvers.messages
+            .getMessage(req)
             .then((toDelete) => {
                 if (toDelete.rowCount === 0) {
                     res.status(404);
@@ -54,18 +55,17 @@ const messages = {
                     next();
                 } else if (toDelete.rowCount === 1) {
                     // Populate the filename to be deleted
-                    const delFilename = toDelete.rows[0].filename ?
-                        toDelete.rows[0].filename :
-                        null;
+                    const delFilename = toDelete.rows[0].filename
+                        ? toDelete.rows[0].filename
+                        : null;
                     return db.resolvers.messages
                         .deleteMessage(req, toDelete.rows[0])
                         .then(async () => {
-
                             // Make the necessary data available to the
                             // websockets sending middleware
-                            const query = await db.resolvers.queries.getQuery(
-                                { params: { id: toDelete.rows[0].query_id } }
-                            );
+                            const query = await db.resolvers.queries.getQuery({
+                                params: { id: toDelete.rows[0].query_id }
+                            });
                             req.wsData = {
                                 message: toDelete.rows[0],
                                 queries: query.rows
@@ -74,7 +74,9 @@ const messages = {
                             // We need to delete any file attachment associated with
                             // this message
                             if (delFilename) {
-                                fs.unlinkSync(`${process.env.UPLOADS_DIR}/${delFilename}`);
+                                fs.unlinkSync(
+                                    `${process.env.UPLOADS_DIR}/${delFilename}`
+                                );
                             }
                             res.status(204);
                             res.json({});

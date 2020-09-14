@@ -10,7 +10,7 @@ const roles = {
             })
             .catch((err) => {
                 next(err);
-            }),
+            })
 };
 
 module.exports = roles;

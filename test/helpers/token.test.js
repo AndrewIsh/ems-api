@@ -7,7 +7,8 @@ const token = require('../../helpers/token');
 const AuthCache = require('../../classes/AuthCache');
 const { postJwtAuth, doRefresh } = require('../../helpers/token');
 
-const mockToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyMyIsImlhdCI6MTU5NzMwODYwOSwiZXhwIjoxNTk3MzA5NTA5fQ.hZoxIe79mhHIgC-ihSitGPUw9R6ViRFprhh1gn-ymt4';
+const mockToken =
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyMyIsImlhdCI6MTU5NzMwODYwOSwiZXhwIjoxNTk3MzA5NTA5fQ.hZoxIe79mhHIgC-ihSitGPUw9R6ViRFprhh1gn-ymt4';
 
 // Mock uuid.v4
 jest.mock('uuid', () => ({
@@ -31,7 +32,7 @@ describe('getIdFromToken', () => {
         const id = token.getIdFromToken(mockToken);
         expect(id).toEqual('23');
     });
-})
+});
 
 describe('generateJwt', () => {
     const OLD_ENV = process.env;
@@ -75,7 +76,9 @@ describe('verifyJwt', () => {
         let myToken = token.generateJwt('23');
         // Remove the last character
         myToken = myToken.slice(0, -1);
-        expect(() => token.verifyJwt(myToken)).toThrowError(/invalid signature/);
+        expect(() => token.verifyJwt(myToken)).toThrowError(
+            /invalid signature/
+        );
     });
 });
 
@@ -83,7 +86,10 @@ describe('generateRefresh', () => {
     it('should take a userId, call store and return a generated UUID', () => {
         AuthCache.store = jest.fn();
         const newToken = token.generateRefresh('89');
-        expect(AuthCache.store).toBeCalledWith({ userId: '89', newToken: '123' });
+        expect(AuthCache.store).toBeCalledWith({
+            userId: '89',
+            newToken: '123'
+        });
         expect(newToken).toEqual('123');
     });
 });
@@ -109,7 +115,9 @@ describe('addRefreshToken', () => {
     });
     it('should take a response object and token and in prod call res.cookie including secure: true', () => {
         const mockResponse = {
-            cookie: jest.fn().mockImplementation((key, value, options) => options)
+            cookie: jest
+                .fn()
+                .mockImplementation((key, value, options) => options)
         };
         process.env.NODE_ENV = 'production';
         token.addRefreshToken(mockResponse, '123');
@@ -119,11 +127,17 @@ describe('addRefreshToken', () => {
             maxAge: 604800000,
             secure: true
         };
-        expect(mockResponse.cookie).toBeCalledWith('refresh_token', '123', returnedOptions);
+        expect(mockResponse.cookie).toBeCalledWith(
+            'refresh_token',
+            '123',
+            returnedOptions
+        );
     });
     it('should take a response object and token and in dev call res.cookie NOT including secure: true', () => {
         const mockResponse = {
-            cookie: jest.fn().mockImplementation((key, value, options) => options)
+            cookie: jest
+                .fn()
+                .mockImplementation((key, value, options) => options)
         };
         process.env.NODE_ENV = 'development';
         token.addRefreshToken(mockResponse, '123');
@@ -132,7 +146,11 @@ describe('addRefreshToken', () => {
             sameSite: 'Strict',
             maxAge: 604800000
         };
-        expect(mockResponse.cookie).toBeCalledWith('refresh_token', '123', returnedOptions);
+        expect(mockResponse.cookie).toBeCalledWith(
+            'refresh_token',
+            '123',
+            returnedOptions
+        );
     });
 });
 

@@ -38,7 +38,10 @@ const Google = (app) => {
                 if (result.rowCount === 1) {
                     done(null, result.rows[0]);
                 } else {
-                    done('Error adding / updating user record in database', null);
+                    done(
+                        'Error adding / updating user record in database',
+                        null
+                    );
                 }
             })
             .catch((err) => done(err, null));
@@ -49,31 +52,26 @@ const Google = (app) => {
     // Add our routes for forwarding to Google...
     app.get(
         '/auth/google',
-        passport.authenticate(
-            'google',
-            {
-                scope: [
-                    'https://www.googleapis.com/auth/userinfo.profile'
-                ]
-            },
-        )
+        passport.authenticate('google', {
+            scope: ['https://www.googleapis.com/auth/userinfo.profile']
+        })
     );
 
     // ...and returning from Google
     app.get(
         `/auth/google/callback`,
-        passport.authenticate(
-            'google',
-            {
-                failureRedirect: '/login',
-            }
-        ),
+        passport.authenticate('google', {
+            failureRedirect: '/login'
+        }),
         (req, res) => {
             // Generate a refresh token and redirect the useragent back to the client,
             // at which point they will use the refresh token to obtain a JWT
             const token = generateRefresh(req.user);
             addRefreshToken(res, token);
-            const port = process.env.CLIENT_PORT.length > 0 ? `:${process.env.CLIENT_PORT}` : '';
+            const port =
+                process.env.CLIENT_PORT.length > 0
+                    ? `:${process.env.CLIENT_PORT}`
+                    : '';
             return res.redirect(302, `${process.env.CLIENT_HOST}${port}`);
         }
     );

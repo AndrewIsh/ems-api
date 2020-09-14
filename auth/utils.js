@@ -6,11 +6,10 @@ const serializeCallback = (user, done) => done(null, user.provider_id);
 
 const deserializeCallback = async ({ id }, done) => {
     try {
-        const user = await db.resolvers.users
-            .getUser({ params: { id } });
-        return done(null, user)
+        const user = await db.resolvers.users.getUser({ params: { id } });
+        return done(null, user);
     } catch (err) {
-        return done(err, null)
+        return done(err, null);
     }
 };
 
@@ -29,7 +28,11 @@ const getAvailableAuthtypes = () => {
 
     const { hasSaml, NAME: samlName, LOGOUT_ENDPOINT } = samlConfig();
     if (hasSaml) {
-        availableMethods.push({ id: 'saml', name: samlName, logoutUrl: LOGOUT_ENDPOINT });
+        availableMethods.push({
+            id: 'saml',
+            name: samlName,
+            logoutUrl: LOGOUT_ENDPOINT
+        });
     }
 
     return availableMethods;
@@ -43,8 +46,8 @@ const googleConfig = () => {
     };
     return {
         ...config,
-        hasGoogle: (config.CLIENT_ID && config.CLIENT_SECRET) ? true : false
-    }
+        hasGoogle: config.CLIENT_ID && config.CLIENT_SECRET ? true : false
+    };
 };
 
 const samlConfig = () => {
@@ -56,17 +59,17 @@ const samlConfig = () => {
     };
 
     const hasSaml = () => {
-        return (
-            config.ENTRY_POINT &&
+        return config.ENTRY_POINT &&
             config.ISSUER_STRING &&
             config.LOGOUT_ENDPOINT
-        ) ? true : false;
+            ? true
+            : false;
     };
 
     return {
         ...config,
         hasSaml: hasSaml()
-    }
+    };
 };
 
 const checkIsInRole = (...roles) => (req, res, next) => {
@@ -75,7 +78,7 @@ const checkIsInRole = (...roles) => (req, res, next) => {
         res.send('User not found');
         return next();
     }
-    const hasRole = roles.find(role => req.user.role_code === role);
+    const hasRole = roles.find((role) => req.user.role_code === role);
     if (!hasRole) {
         res.status(401);
         res.send('Role not found');

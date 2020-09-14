@@ -31,22 +31,23 @@ const queries = {
     mostRecentSeenToAll: async (req, res, next) => {
         const allClients = WebsocketServer.connectedClientUserIds();
         allClients.forEach((id) => {
-            queries.mostRecentSeenToClient(
-                { user: { id } },
-                null,
-                next
-            )
+            queries.mostRecentSeenToClient({ user: { id } }, null, next);
         });
     },
     // Send updated most recent seen to a user
     mostRecentSeenToClient: async (req, res, next) => {
-        const mostRecentSeen = await db.resolvers.queryuser.getMostRecentSeen(req.user);
+        const mostRecentSeen = await db.resolvers.queryuser.getMostRecentSeen(
+            req.user
+        );
         if (mostRecentSeen.rowCount > 0) {
             // Create an object of most recent seen, for this user,
             // keyed on query ID
             // e.g. { 21: 3, 22: 0, 23: 1 }
             const toSend = mostRecentSeen.rows.reduce(
-                (acc, val) => ({ ...acc, [val.query_id]: val.most_recent_seen }),
+                (acc, val) => ({
+                    ...acc,
+                    [val.query_id]: val.most_recent_seen
+                }),
                 {}
             );
             WebsocketServer.onlyInitiatorMessage({
@@ -63,7 +64,8 @@ const queries = {
         const { query_ids } = req.wsData;
 
         const unseenCounts = await db.resolvers.queryuser.getUserUnseenCounts({
-            query_ids, user_id: req.user.id
+            query_ids,
+            user_id: req.user.id
         });
 
         if (unseenCounts.rowCount > 0) {
@@ -91,12 +93,14 @@ const queries = {
         const connectedClients = WebsocketServer.connectedClientUserIds();
 
         // Get the unseen counts for every participant of this query
-        const unseenCounts = await db.resolvers.queryuser.getParticipantUnseenCounts({
-            query_id: message.query_id
-        });
+        const unseenCounts = await db.resolvers.queryuser.getParticipantUnseenCounts(
+            {
+                query_id: message.query_id
+            }
+        );
         // Filter the results to only counts involving active clients
-        const withClient = unseenCounts.rows.filter(
-            (row) => connectedClients.indexOf(row.user_id > -1)
+        const withClient = unseenCounts.rows.filter((row) =>
+            connectedClients.indexOf(row.user_id > -1)
         );
         if (withClient.length > 0) {
             // Send a message to each user

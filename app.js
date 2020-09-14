@@ -41,11 +41,15 @@ module.exports = {
         // We should only need CORS when in development, we want to not allow CORS
         // when in production as a partial mitigation against CSRF
         if (process.env.NODE_ENV === 'development') {
-            app.use(cors((req, cb) => cb(null, {
-                exposedHeaders: 'Authorization',
-                credentials: true,
-                origin: `${process.env.CLIENT_HOST}:${process.env.CLIENT_PORT}`
-            })));
+            app.use(
+                cors((req, cb) =>
+                    cb(null, {
+                        exposedHeaders: 'Authorization',
+                        credentials: true,
+                        origin: `${process.env.CLIENT_HOST}:${process.env.CLIENT_PORT}`
+                    })
+                )
+            );
         }
         app.use(helmet());
         app.use(cookieParser());
@@ -57,12 +61,13 @@ module.exports = {
         // Configure how we are storing our file uploads
         const storage = multer.diskStorage({
             destination: (req, file, cb) => {
-                cb(null, 'uploads')
+                cb(null, 'uploads');
             },
             filename: (req, file, cb) => {
                 const ext = path.extname(file.originalname);
                 const filename = path.basename(file.originalname, ext);
-                const suffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+                const suffix =
+                    Date.now() + '-' + Math.round(Math.random() * 1e9);
                 cb(null, filename + '-' + suffix + ext);
             }
         });

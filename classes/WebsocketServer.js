@@ -25,22 +25,24 @@ class WebsocketServer {
                 // to the client object, this will enable us to
                 // target messages
                 socketClient.userId = sub;
-                console.log(`WS client connected, ${this.socketServer.clients.size} clients connected`);
+                console.log(
+                    `WS client connected, ${this.socketServer.clients.size} clients connected`
+                );
                 socketClient.on('close', () => {
-                    console.log(`WS client disconnected, ${this.socketServer.clients.size} clients connected`);
+                    console.log(
+                        `WS client disconnected, ${this.socketServer.clients.size} clients connected`
+                    );
                 });
             } catch (err) {
                 console.log('WS client unauthorised, closing connection');
                 socketClient.close();
             }
-        })
+        });
     }
     // Return an array of all connected client user IDs
     connectedClientUserIds() {
         const ids = [];
-        this.socketServer.clients.forEach(
-            (client) => ids.push(client.userId)
-        );
+        this.socketServer.clients.forEach((client) => ids.push(client.userId));
         return ids;
     }
     // Send a message to all available clients

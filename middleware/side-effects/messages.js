@@ -4,9 +4,7 @@ const messages = {
     // Inform all clients, apart from the initiator, that
     // a message has been created or updated
     newMessageToClients: (req, res, next) => {
-        const socketAction = req.method === 'POST' ?
-            'create' :
-            'update';
+        const socketAction = req.method === 'POST' ? 'create' : 'update';
         const { message } = req.wsData;
         // Send the new message via the websocket
         WebsocketServer.excludeInitiatorMessage({
@@ -29,8 +27,7 @@ const messages = {
             payload: message
         });
         next();
-    },
-
+    }
 };
 
 module.exports = messages;

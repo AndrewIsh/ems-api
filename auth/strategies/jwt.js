@@ -9,7 +9,7 @@ const Jwt = () => {
     const strategyOptions = {
         jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
         secretOrKey: process.env.JWT_SECRET,
-        passReqToCallback: true,
+        passReqToCallback: true
     };
 
     // The callback that passport-jwt calls once it has SUCCESSFULLY
@@ -22,9 +22,9 @@ const Jwt = () => {
         const jwtToken = getTokenFromRequest(req);
         try {
             verifyJwt(jwtToken);
-            const user = await db.resolvers.users.getUser(
-                { params: { id: jwtPayload.sub } }
-            );
+            const user = await db.resolvers.users.getUser({
+                params: { id: jwtPayload.sub }
+            });
             if (user.rowCount === 1) {
                 return done(null, user.rows[0]);
             } else {
@@ -35,7 +35,7 @@ const Jwt = () => {
         }
     };
 
-    passport.use(new JwtStrategy(strategyOptions, verifyCallback))
-}
+    passport.use(new JwtStrategy(strategyOptions, verifyCallback));
+};
 
 module.exports = Jwt;

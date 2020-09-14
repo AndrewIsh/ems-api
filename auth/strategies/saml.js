@@ -7,7 +7,6 @@ const { generateRefresh, addRefreshToken } = require('../../helpers/token');
 const { samlConfig } = require('../utils');
 
 const Saml = (app) => {
-
     // Get the details we need from the config for creating
     // our strategy
     const { hasSaml, ENTRY_POINT, ISSUER_STRING, LOGOUT_URL } = samlConfig();
@@ -43,8 +42,8 @@ const Saml = (app) => {
             // to the async approach discussed in the bcrypt module's docs if this
             // becomes problematic. However, since this only gets called when a user
             // logs in, it's not going to be heavily hit
-            const found = allUsers.rows.find(
-                (user) => bcrypt.compareSync(uid, user.provider_id)
+            const found = allUsers.rows.find((user) =>
+                bcrypt.compareSync(uid, user.provider_id)
             );
 
             // SAML can provide sensitive information as an identifier
@@ -72,33 +71,31 @@ const Saml = (app) => {
                 })
                 .catch((err) => done(err, null));
         });
-
-    }
+    };
 
     passport.use(new SamlStrategy(strategyOptions, verifyCallback));
 
     // Add our routes for forwarding to the IdP...
-    app.get('/auth/saml',
-        passport.authenticate('saml')
-    );
+    app.get('/auth/saml', passport.authenticate('saml'));
 
     // ...and returning from the IdP
-    app.post('/auth/saml/callback',
-        passport.authenticate(
-            'saml',
-            {
-                failureRedirect: '/login'
-            }
-        ),
+    app.post(
+        '/auth/saml/callback',
+        passport.authenticate('saml', {
+            failureRedirect: '/login'
+        }),
         (req, res) => {
             // Generate a refresh token and redirect the useragent back to the client,
             // at which point they will use the refresh token to obtain a JWT
             const token = generateRefresh(req.user);
             addRefreshToken(res, token);
-            const port = process.env.CLIENT_PORT.length > 0 ? `:${process.env.CLIENT_PORT}` : '';
+            const port =
+                process.env.CLIENT_PORT.length > 0
+                    ? `:${process.env.CLIENT_PORT}`
+                    : '';
             return res.redirect(302, `${process.env.CLIENT_HOST}${port}`);
         }
     );
-}
+};
 
 module.exports = Saml;

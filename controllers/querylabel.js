@@ -18,28 +18,30 @@ const querylabel = {
         // Establish what resolver we need
         const dbResolver = db.resolvers.querylabel[action];
         // Resolvers return promises, so create an array of them
-        const updates = queryLabels.map((queryId) => dbResolver(
-            { params: { query_id: queryId, label_id: req.params.label_id } }
-        ));
+        const updates = queryLabels.map((queryId) =>
+            dbResolver({
+                params: { query_id: queryId, label_id: req.params.label_id }
+            })
+        );
         // When all DB operations are complete, get all updated queries
         // and return them
-        return Promise.all(updates).then(async (responses) => {
-            const out = queryLabels.map(async (queryId) => {
-                const query = await db.resolvers.queries.getQuery({
-                    params: { id: queryId }
+        return Promise.all(updates)
+            .then(async (responses) => {
+                const out = queryLabels.map(async (queryId) => {
+                    const query = await db.resolvers.queries.getQuery({
+                        params: { id: queryId }
+                    });
+                    const embedded = await helpers.addEmbeds(query.rows);
+                    return embedded[0];
                 });
-                const embedded = await helpers.addEmbeds(query.rows);
-                return embedded[0];
-            });
-            Promise.all(out).then((toReturn) => {
-                req.wsData = { queries: toReturn };
-                res.status(200);
-                res.json(toReturn);
-                next();
-            });
-        })
+                Promise.all(out).then((toReturn) => {
+                    req.wsData = { queries: toReturn };
+                    res.status(200);
+                    res.json(toReturn);
+                    next();
+                });
+            })
             .catch((err) => next(err));
-
     }
 };
 

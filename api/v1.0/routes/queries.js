@@ -50,8 +50,7 @@ router.delete(
 router.post(
     '/:query_id/label/:label_id',
     checkIsInRole('STAFF'),
-    (req, res, next) =>
-        querylabel.addRemove(req, res, next, 'addLabelToQuery'),
+    (req, res, next) => querylabel.addRemove(req, res, next, 'addLabelToQuery'),
     queriesSideEffects.updatedQueriesToClients,
     labelsSideEffects.labelCountsToClients
 );
