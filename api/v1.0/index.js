@@ -20,6 +20,10 @@ const {
 //
 // Routes that require a JWT (and therefore need
 // handling of the case where the JWT validation failed)
+// 
+// ** NOTE: /token definitions are not here, we define them in
+// their router because we need different behaviour according
+// to method
 const withJwt = [
     { path: 'queries', router: queryRouter },
     { path: 'messages', router: messageRouter },
