@@ -15,7 +15,6 @@ const messages = {
         const recipients = allAssociated.filter(
             (associated) => associated !== req.user.id
         );
-        console.log(recipients);
         // Send the new message via the websocket
         WebsocketServer.recipientsMessage({
             recipients,

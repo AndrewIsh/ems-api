@@ -29,12 +29,7 @@ const queries = {
         const toSend = await helpers.addEmbeds(queries);
         // Find out who should receive this message
         const queryIds = queries.map((query) => query.id);
-        const allAssociated = await db.resolvers.queries.associated(queryIds);
-        // Remove the updater of the query, they will have received it in
-        // the API response
-        const recipients = allAssociated.filter(
-            (associated) => associated !== req.user.id
-        );
+        const recipients = await db.resolvers.queries.associated(queryIds);
         // Send the updated query via the websocket
         WebsocketServer.recipientsMessage({
             recipients,
