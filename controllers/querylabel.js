@@ -3,7 +3,15 @@ const db = require('../../ems-db');
 const helpers = require('../helpers/queries');
 
 const querylabel = {
-    addRemove: (req, res, next, action) => {
+    addRemove: async (req, res, next, action) => {
+        // Ensure the user is staff
+        const allStaff = await db.resolvers.users.allStaff();
+        const staffIds = allStaff.rows.map((row) => row.id);
+        if (staffIds.indexOf(req.user.id) === -1) {
+            res.status(404);
+            res.send();
+            return; 
+        }
         // Here I am electing to call the DB resolver once for each
         // relationship. It would be possible to modify the query itself
         // to insert/delete all rows in a single operation, but this method

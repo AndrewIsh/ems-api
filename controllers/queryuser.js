@@ -1,7 +1,13 @@
 const db = require('../../ems-db');
 
 const queryuser = {
-    updateMostRecentSeen: (req, res, next) =>
+    updateMostRecentSeen: (req, res, next) => {
+        // We should only be able to update most recent seen
+        // for the requesting user
+        if (req.user.id !== parseInt(req.params.user_id)) {
+            res.status(404);
+            return; 
+        }
         db.resolvers.queryuser
             .updateMostRecentSeen(req)
             .then((result) => {
@@ -20,7 +26,8 @@ const queryuser = {
                     next();
                 }
             })
-            .catch((err) => next(err))
+            .catch((err) => next(err));
+    }
 };
 
 module.exports = queryuser;

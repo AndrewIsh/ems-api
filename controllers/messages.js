@@ -1,5 +1,9 @@
 const fs = require('fs');
 
+const {
+    userCanCreate,
+    userIsCreator
+} = require('../helpers/messages');
 const db = require('../../ems-db');
 
 const messages = {
@@ -16,8 +20,20 @@ const messages = {
                 res.send();
                 next();
             }),
-    upsertMessage: (req, res, next) =>
-        // TODO: Ensure the message being edited belongs to the user
+    upsertMessage: async (req, res, next) => {
+        // Is the user entitled to do this?
+        let entitled = false;
+        if (req.method === 'POST') {
+            entitled = await userCanCreate(req);
+        } else {
+            entitled = await userIsCreator(req);
+        }
+        if (!entitled) {
+            res.status(404);
+            res.send();
+            return;
+        }
+        
         db.resolvers.messages
             .upsertMessage(req)
             .then(async (result) => {
@@ -40,10 +56,16 @@ const messages = {
                     next();
                 }
             })
-            .catch((err) => next(err)),
-    deleteMessage: (req, res, next) =>
-        // TODO: Ensure the message being deleted belongs to the user
-        //
+            .catch((err) => next(err));
+    },
+    deleteMessage: async (req, res, next) => {
+        // Ensure the deleting user is the creator of the message
+        const canEdit = await userIsCreator(req);
+        if (!canEdit) {
+            res.status(404);
+            res.send();
+            return;
+        }
         // First get the message that is about to be deleted and
         // check if it has a file attachment
         db.resolvers.messages
@@ -89,7 +111,8 @@ const messages = {
                     next();
                 }
             })
-            .catch((err) => next(err))
+            .catch((err) => next(err));
+    }
 };
 
 module.exports = messages;

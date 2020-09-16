@@ -21,6 +21,15 @@ const queries = {
         }
     },
     getQuery: async (req, res, next) => {
+        // Only allow a user to get a query they are associated with
+        const associated = await db.resolvers.queries.associated(
+            [req.params.id]
+        );
+        if (associated.indexOf(req.user.id) === -1) {
+            res.status(404);
+            res.send();
+            return; 
+        }
         try {
             const query = await db.resolvers.queries.getQuery(req);
             if (query.rowCount > 1) {
@@ -41,6 +50,17 @@ const queries = {
         }
     },
     upsertQuery: async (req, res, next) => {
+        // If we're updating, ensure the updating user
+        // is staff
+        if (req.method === 'PUT') {
+            const allStaff = await db.resolvers.users.allStaff();
+            const staffIds = allStaff.rows.map((row) => row.id);
+            if (staffIds.indexOf(req.user.id) === -1) {
+                res.status(404);
+                res.send();
+                return; 
+            }
+        }
         try {
             const result = await db.resolvers.queries.upsertQuery(req);
             if (result.rowCount === 0) {
@@ -65,7 +85,15 @@ const queries = {
             next(err);
         }
     },
-    deleteQuery: (req, res, next) =>
+    deleteQuery: async (req, res, next) => {
+        // Ensure the deleting user is staff
+        const allStaff = await db.resolvers.users.allStaff();
+        const staffIds = allStaff.rows.map((row) => row.id);
+        if (staffIds.indexOf(req.user.id) === -1) {
+            res.status(404);
+            res.send();
+            return; 
+        }
         db.resolvers.queries
             .deleteQuery(req)
             .then((result) => {
@@ -83,8 +111,17 @@ const queries = {
                     next();
                 }
             })
-            .catch((err) => next(err)),
-    updateBulk: (req, res, next) => {
+            .catch((err) => next(err));
+    },
+    updateBulk: async (req, res, next) => {
+        // Ensure the updating user is staff
+        const allStaff = await db.resolvers.users.allStaff();
+        const staffIds = allStaff.rows.map((row) => row.id);
+        if (staffIds.indexOf(req.user.id) === -1) {
+            res.status(404);
+            res.send();
+            return; 
+        }
         const updates = db.resolvers.queries.updateBulk(req);
         // Wait until all updates are complete (we're allowing for the fact
         // that some may fail, hence allSettled)
