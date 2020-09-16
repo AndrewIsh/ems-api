@@ -42,7 +42,9 @@ class WebsocketServer {
     // Return an array of all connected client user IDs
     connectedClientUserIds() {
         const ids = [];
-        this.socketServer.clients.forEach((client) => ids.push(client.userId));
+        this.socketServer.clients.forEach(
+            (client) => ids.push(client.userId)
+        );
         return ids;
     }
     // Send a message to all available clients
@@ -55,6 +57,20 @@ class WebsocketServer {
     broadcastMessage({ initiator, subject, action, payload }) {
         this.socketServer.clients.forEach((client) => {
             if (client.readyState === WebSocket.OPEN) {
+                client.send(
+                    JSON.stringify({ initiator, subject, action, payload })
+                );
+            }
+        });
+    }
+    // Send a message to a specific list of recipients, as long as they're
+    // connected
+    recipientsMessage({ recipients, initiator, subject, action, payload }) {
+        this.socketServer.clients.forEach((client) => {
+            if (
+                recipients.indexOf(client.userId) > -1 &&
+                client.readyState === WebSocket.OPEN
+            ) {
                 client.send(
                     JSON.stringify({ initiator, subject, action, payload })
                 );

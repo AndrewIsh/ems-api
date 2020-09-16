@@ -6,8 +6,16 @@ const queries = {
     createdQueryToClients: async (req, res, next) => {
         const { queries } = req.wsData;
         // Send the updated query via the websocket
-        // but not to the user who created the message
-        WebsocketServer.excludeInitiatorMessage({
+        // Find out who should receive this message
+        const queryIds = queries.map((query) => query.id);
+        const allAssociated = await db.resolvers.queries.associated(queryIds);
+        // Remove the creator of the query, they will have received it in
+        // the API response
+        const recipients = allAssociated.filter(
+            (associated) => associated !== queries[0].initiator
+        );
+        WebsocketServer.recipientsMessage({
+            recipients,
             initiator: queries[0].initiator,
             subject: 'query',
             action: 'create',
@@ -19,8 +27,17 @@ const queries = {
     updatedQueriesToClients: async (req, res, next) => {
         const { queries } = req.wsData;
         const toSend = await helpers.addEmbeds(queries);
+        // Find out who should receive this message
+        const queryIds = queries.map((query) => query.id);
+        const allAssociated = await db.resolvers.queries.associated(queryIds);
+        // Remove the updater of the query, they will have received it in
+        // the API response
+        const recipients = allAssociated.filter(
+            (associated) => associated !== req.user.id
+        );
         // Send the updated query via the websocket
-        WebsocketServer.broadcastMessage({
+        WebsocketServer.recipientsMessage({
+            recipients,
             subject: 'query',
             action: 'update',
             payload: toSend
