@@ -24,7 +24,7 @@ class WebsocketServer {
                 // Get the user ID in the payload and add it
                 // to the client object, this will enable us to
                 // target messages
-                socketClient.userId = sub;
+                socketClient.userId = parseInt(sub);
                 console.log(
                     `WS client connected, ${this.socketServer.clients.size} clients connected`
                 );
@@ -66,7 +66,7 @@ class WebsocketServer {
     excludeInitiatorMessage({ initiator, subject, action, payload }) {
         this.socketServer.clients.forEach((client) => {
             if (
-                parseInt(client.userId) !== parseInt(initiator) &&
+                client.userId !== parseInt(initiator) &&
                 client.readyState === WebSocket.OPEN
             ) {
                 client.send(
@@ -81,7 +81,7 @@ class WebsocketServer {
         try {
             this.socketServer.clients.forEach((client) => {
                 if (
-                    parseInt(client.userId) === parseInt(initiator) &&
+                    client.userId === parseInt(initiator) &&
                     client.readyState === WebSocket.OPEN
                 ) {
                     client.send(
