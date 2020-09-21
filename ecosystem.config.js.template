@@ -15,6 +15,7 @@ module.exports = {
                 PGPASSWORD: '<db_password>',
                 SCHEMA: '<db_user>',
                 API_PORT: <api_port>,
+                WS_PORT: <ws_port>,
                 LOG_FILE: '/tmp/access.log',
                 GOOGLE_NAME: null,
                 GOOGLE_OAUTH_CLIENT_ID: null
@@ -34,6 +35,7 @@ module.exports = {
                 PGPASSWORD: '<db_password>',
                 SCHEMA: '<db_user>',
                 API_PORT: <api_port>,
+                WS_PORT: <ws_port>,
                 LOG_FILE: '/tmp/access.log',
                 GOOGLE_NAME: null,
                 GOOGLE_OAUTH_CLIENT_ID: null
