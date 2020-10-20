@@ -9,7 +9,7 @@ const passport = require('passport');
 const multer = require('multer');
 const helmet = require('helmet');
 const logger = require('morgan');
-const OpenApiValidator = require('express-openapi-validator').OpenApiValidator;
+const OpenApiValidator = require('express-openapi-validator');
 
 const apiRouter = require('./api');
 const { errorFallback } = require('./middleware/error-handler');
@@ -74,6 +74,17 @@ module.exports = {
         });
 
         // Install the OpenAPI validator
+        app.use(
+            OpenApiValidator.middleware({
+                apiSpec: './api_spec/ems.yaml',
+                validateRequests: true,
+                validateResponses: true,
+                fileUploader: {
+                    storage
+                }
+            })
+        );
+        /*
         await new OpenApiValidator({
             apiSpec: './api_spec/ems.yaml',
             validateRequests: true,
@@ -82,6 +93,7 @@ module.exports = {
                 storage
             }
         }).install(app);
+        */
 
         // API route
         app.use('/api', apiRouter);
