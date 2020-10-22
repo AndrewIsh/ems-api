@@ -26,13 +26,14 @@ const Google = (app) => {
     const verifyCallback = (accessToken, refreshToken, profile, done) => {
         // Take what we've received from Google, create or update the user
         // then pass the result forward
-        const { sub, name, picture } = profile._json;
+        const { sub, name, email, picture } = profile._json;
         db.resolvers.users
             .upsertUserByProviderId({
                 provider: 'google',
                 providerId: sub,
                 name,
-                avatar: picture
+                email,
+                avatar: picture,
             })
             .then((result) => {
                 if (result.rowCount === 1) {

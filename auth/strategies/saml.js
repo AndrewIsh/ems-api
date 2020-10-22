@@ -29,7 +29,8 @@ const Saml = (app) => {
         const {
             [process.env.SAML_UID_ATTR]: uid,
             'User.FirstName': firstName,
-            'User.LastName': lastName
+            'User.LastName': lastName,
+            'User.email': email,
         } = profile;
 
         // First identify whether this user already exists. We can't do this
@@ -61,7 +62,8 @@ const Saml = (app) => {
                 .upsertUserByProviderId({
                     provider: 'saml',
                     providerId: hashedProviderId,
-                    name: `${firstName} ${lastName}`
+                    name: `${firstName} ${lastName}`,
+                    email
                 })
                 .then((result) => {
                     if (result.rowCount === 1) {
