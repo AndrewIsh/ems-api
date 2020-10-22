@@ -53,7 +53,11 @@ const Google = (app) => {
     app.get(
         '/auth/google',
         passport.authenticate('google', {
-            scope: ['https://www.googleapis.com/auth/userinfo.profile']
+            // Request profile and user email
+            scope: [
+                'https://www.googleapis.com/auth/userinfo.profile',
+                'https://www.googleapis.com/auth/userinfo.email'
+            ]
         })
     );
 
