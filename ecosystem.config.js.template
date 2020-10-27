@@ -18,7 +18,7 @@ module.exports = {
                 WS_PORT: <ws_port>,
                 LOG_FILE: '/tmp/access.log',
                 GOOGLE_NAME: null,
-                GOOGLE_OAUTH_CLIENT_ID: null
+                GOOGLE_OAUTH_CLIENT_ID: null,
                 GOOGLE_OAUTH_CLIENT_SECRET: null,
                 SAML_NAME: null,
                 SAML_ENTRY_POINT: null,
@@ -38,7 +38,7 @@ module.exports = {
                 WS_PORT: <ws_port>,
                 LOG_FILE: '/tmp/access.log',
                 GOOGLE_NAME: null,
-                GOOGLE_OAUTH_CLIENT_ID: null
+                GOOGLE_OAUTH_CLIENT_ID: null,
                 GOOGLE_OAUTH_CLIENT_SECRET: null,
                 SAML_NAME: null,
                 SAML_ENTRY_POINT: null,
