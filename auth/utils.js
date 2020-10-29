@@ -46,7 +46,7 @@ const googleConfig = () => {
     };
     return {
         ...config,
-        hasGoogle: config.CLIENT_ID && config.CLIENT_SECRET ? true : false
+        hasGoogle: config.CLIENT_ID !== 'null' && config.CLIENT_SECRET !== 'null' ? true : false
     };
 };
 
@@ -59,9 +59,9 @@ const samlConfig = () => {
     };
 
     const hasSaml = () => {
-        return config.ENTRY_POINT &&
-            config.ISSUER_STRING &&
-            config.LOGOUT_ENDPOINT
+        return config.ENTRY_POINT !== 'null' &&
+            config.ISSUER_STRING !== 'null' &&
+            config.LOGOUT_ENDPOINT !== 'null'
             ? true
             : false;
     };
