@@ -15,7 +15,7 @@ const apiRouter = require('./api');
 const { errorFallback } = require('./middleware/error-handler');
 const { initialiseAuthentication } = require('./auth');
 
-process.env.UPLOADS_DIR = 'uploads';
+process.env.UPLOADS_DIR = `uploads/${process.env.SCHEMA}`;
 
 module.exports = {
     init: async () => {
@@ -30,6 +30,11 @@ module.exports = {
         );
 
         // File downloads
+        // Ensure our upload directory exists
+        if (!fs.existsSync(process.env.UPLOADS_DIR)) {
+            fs.mkdirSync(process.env.UPLOADS_DIR);
+        }
+        // Handle download requests
         app.get('/download/*', (req, res) => {
             const file = `${process.env.UPLOADS_DIR}/${req.params[0]}`;
             res.download(file);
@@ -62,7 +67,7 @@ module.exports = {
         // Configure how we are storing our file uploads
         const storage = multer.diskStorage({
             destination: (req, file, cb) => {
-                cb(null, 'uploads');
+                cb(null, process.env.UPLOADS_DIR);
             },
             filename: (req, file, cb) => {
                 const ext = path.extname(file.originalname);
