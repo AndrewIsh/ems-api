@@ -33,6 +33,7 @@ module.exports = {
                 SHIB_ENTRY_POINT: null,
                 SHIB_ISSUER: null,
                 SHIB_SP_PRIV_KEY: null,
+                SHIB_SP_CERT: null,
                 SHIB_IDP_CERT: null,
                 SHIB_NAME: null,
                 JWT_SECRET: null
@@ -63,6 +64,7 @@ module.exports = {
                 SHIB_ENTRY_POINT: null,
                 SHIB_ISSUER: null,
                 SHIB_SP_PRIV_KEY: null,
+                SHIB_SP_CERT: null,
                 SHIB_IDP_CERT: null,
                 SHIB_NAME: null,
                 JWT_SECRET: null

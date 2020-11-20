@@ -15,6 +15,7 @@ const Shibboleth = (app) => {
         CALLBACK_URL,
         ENTRY_POINT,
         ISSUER,
+        SP_CERT,
         SP_PRIV_KEY,
         IDP_CERT
     } = shibConfig();
@@ -32,7 +33,7 @@ const Shibboleth = (app) => {
         // Usually specified as `/shibboleth` from site root
         issuer: ISSUER,
         // Service Provider private key
-        decryptionPvk: fs.readFileSync(SP_PRIV_KEY, 'utf8'),
+        decryptionPvk: fs.readFileSync(SP_PRIV_KEY, 'utf8').replace(/\n/gm, ''),
         // Identity Provider's public key (as a single line)
         cert: fs.readFileSync(IDP_CERT, 'utf8').replace(/\n/gm, ''),
         // Do not request authentication context, can help with ADFS
@@ -77,7 +78,7 @@ const Shibboleth = (app) => {
 
             db.resolvers.users
                 .upsertUserByProviderId({
-                    provider: 'saml',
+                    provider: 'shibboleth',
                     providerId: hashedProviderId,
                     name: `${firstName} ${lastName}`,
                     email
@@ -122,9 +123,8 @@ const Shibboleth = (app) => {
     app.get(
         '/Shibboleth.sso/Metadata', 
         (req, res) => {
-            const metadata = shibStrategy.generateServiceProviderMetadata(
-                strategyOptions.decryptionPvk
-            );
+            const cert = fs.readFileSync(SP_CERT, 'utf8').replace(/\n/gm, '');
+            const metadata = shibStrategy.generateServiceProviderMetadata(cert);
             res.type('application/xml');
             res.status(200).send(metadata);
         }

@@ -86,6 +86,7 @@ const shibConfig = () => {
         'ENTRY_POINT',
         'ISSUER',
         'SP_PRIV_KEY',
+        'SP_CERT',
         'IDP_CERT',
         'UID_ATTR',
         'FIRST_NAME_ATTR',
