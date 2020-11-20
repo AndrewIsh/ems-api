@@ -30,7 +30,7 @@ const Saml = (app) => {
             [process.env.SAML_UID_ATTR]: uid,
             'User.FirstName': firstName,
             'User.LastName': lastName,
-            'User.email': email,
+            'User.email': email
         } = profile;
 
         // First identify whether this user already exists. We can't do this
@@ -100,6 +100,8 @@ const Saml = (app) => {
             return res.redirect(302, `${process.env.CLIENT_HOST}${port}`);
         }
     );
+
+    return app;
 };
 
 module.exports = Saml;
