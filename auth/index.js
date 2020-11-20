@@ -11,7 +11,12 @@ const pipe = (...functions) => (args) =>
 // need
 const initialiseAuthentication = (app) => {
     utils.setup();
-    pipe(strategies.Google, strategies.Saml, strategies.Jwt)(app);
+    pipe(
+        strategies.Google,
+        strategies.Saml,
+        strategies.Shibboleth,
+        strategies.Jwt
+    )(app);
 };
 
 module.exports = { utils, initialiseAuthentication, strategies };

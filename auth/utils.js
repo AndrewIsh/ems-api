@@ -35,6 +35,14 @@ const getAvailableAuthtypes = () => {
         });
     }
 
+    const { hasShib, NAME: shibName } = shibConfig();
+    if (hasShib) {
+        availableMethods.push({
+            id: 'shibboleth',
+            name: shibName
+        });
+    }
+
     return availableMethods;
 };
 
@@ -72,6 +80,39 @@ const samlConfig = () => {
     };
 };
 
+const shibConfig = () => {
+    const requiredProps = [
+        'CALLBACK_URL',
+        'ENTRY_POINT',
+        'ISSUER',
+        'SP_PRIV_KEY',
+        'IDP_CERT',
+        'UID_ATTR',
+        'FIRST_NAME_ATTR',
+        'LAST_NAME_ATTR',
+        'EMAIL_ATTR'
+    ];
+    const config = {};
+    requiredProps.forEach(
+        (prop) => {
+            const val = process.env[`SHIB_${prop}`];
+            if (val !== 'null') {
+                config[prop] = val;
+            }
+        }
+    );
+    config.NAME = process.env.SHIB_NAME || 'Shibboleth';
+
+    // +1 because we added the name property manually
+    const hasShib = () =>
+        Object.keys(config).length === requiredProps.length + 1;
+
+    return {
+        ...config,
+        hasShib: hasShib()
+    };
+};
+
 const checkIsInRole = (...roles) => (req, res, next) => {
     if (!req.user) {
         res.status(401);
@@ -94,6 +135,7 @@ module.exports = {
     setup,
     googleConfig,
     samlConfig,
+    shibConfig,
     getAvailableAuthtypes,
     checkIsInRole
 };
