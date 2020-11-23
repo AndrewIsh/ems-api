@@ -43,6 +43,11 @@ const getAvailableAuthtypes = () => {
         });
     }
 
+    const { hasTwitter, NAME: twitterName } = twitterConfig();
+    if (hasTwitter) {
+        availableMethods.push({ id: 'twitter', name: twitterName });
+    }
+
     return availableMethods;
 };
 
@@ -114,6 +119,22 @@ const shibConfig = () => {
     };
 };
 
+const twitterConfig = () => {
+    const config = {
+        CONSUMER_KEY: process.env.TWITTER_OAUTH_CONSUMER_KEY,
+        CONSUMER_SECRET: process.env.TWITTER_OAUTH_CONSUMER_SECRET,
+        COOKIE_SECRET: process.env.TWITTER_COOKIE_SECRET,
+        NAME: process.env.TWITTER_NAME || 'Twitter'
+    };
+    return {
+        ...config,
+        hasTwitter: config.CONSUMER_KEY !== 'null' &&
+            config.CONSUMER_SECRET !== 'null' &&
+            config.COOKIE_SECRET !== 'null' ? true : false
+    };
+};
+
+
 const checkIsInRole = (...roles) => (req, res, next) => {
     if (!req.user) {
         res.status(401);
@@ -137,6 +158,7 @@ module.exports = {
     googleConfig,
     samlConfig,
     shibConfig,
+    twitterConfig,
     getAvailableAuthtypes,
     checkIsInRole
 };
