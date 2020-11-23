@@ -16,6 +16,7 @@ const initialiseAuthentication = (app) => {
         strategies.Saml,
         strategies.Shibboleth,
         strategies.Twitter,
+        strategies.Facebook,
         strategies.Jwt
     )(app);
 };

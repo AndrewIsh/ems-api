@@ -39,6 +39,8 @@ module.exports = {
                 TWITTER_OAUTH_CONSUMER_KEY: null,
                 TWITTER_OAUTH_CONSUMER_SECRET: null,
                 TWITTER_COOKIE_SECRET: null
+                FACEBOOK_APP_ID: null,
+                FACEBOOK_APP_SECRET: null,
                 JWT_SECRET: null
             },
             env_production: {
@@ -73,6 +75,8 @@ module.exports = {
                 TWITTER_OAUTH_CONSUMER_KEY: null,
                 TWITTER_OAUTH_CONSUMER_SECRET: null,
                 TWITTER_COOKIE_SECRET: null
+                FACEBOOK_APP_ID: null,
+                FACEBOOK_APP_SECRET: null,
                 JWT_SECRET: null
             }
         }

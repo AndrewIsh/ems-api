@@ -43,9 +43,14 @@ const getAvailableAuthtypes = () => {
         });
     }
 
-    const { hasTwitter, NAME: twitterName } = twitterConfig();
+    const { hasTwitter } = twitterConfig();
     if (hasTwitter) {
-        availableMethods.push({ id: 'twitter', name: twitterName });
+        availableMethods.push({ id: 'twitter', name: 'Twitter' });
+    }
+
+    const { hasFacebook } = facebookConfig();
+    if (hasFacebook) {
+        availableMethods.push({ id: 'facebook', name: 'Facebook' });
     }
 
     return availableMethods;
@@ -123,8 +128,7 @@ const twitterConfig = () => {
     const config = {
         CONSUMER_KEY: process.env.TWITTER_OAUTH_CONSUMER_KEY,
         CONSUMER_SECRET: process.env.TWITTER_OAUTH_CONSUMER_SECRET,
-        COOKIE_SECRET: process.env.TWITTER_COOKIE_SECRET,
-        NAME: process.env.TWITTER_NAME || 'Twitter'
+        COOKIE_SECRET: process.env.TWITTER_COOKIE_SECRET
     };
     return {
         ...config,
@@ -134,6 +138,17 @@ const twitterConfig = () => {
     };
 };
 
+const facebookConfig = () => {
+    const config = {
+        APP_ID: process.env.FACEBOOK_APP_ID,
+        APP_SECRET: process.env.FACEBOOK_APP_SECRET
+    };
+    return {
+        ...config,
+        hasFacebook: config.APP_ID !== 'null' &&
+            config.APP_SECRET !== 'null' ? true : false
+    };
+};
 
 const checkIsInRole = (...roles) => (req, res, next) => {
     if (!req.user) {
@@ -159,6 +174,7 @@ module.exports = {
     samlConfig,
     shibConfig,
     twitterConfig,
+    facebookConfig,
     getAvailableAuthtypes,
     checkIsInRole
 };
