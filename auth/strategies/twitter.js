@@ -1,5 +1,6 @@
 const passport = require('passport');
 const session = require('express-session');
+const MemoryStore = require('memorystore')(session);
 const TwitterStrategy = require('passport-twitter').Strategy;
 
 const db = require('../../../ems-db');
@@ -22,6 +23,10 @@ const Twitter = (app) => {
     }
 
     app.use(session({
+        cookie: { maxAge: 86400000 },
+        store: new MemoryStore({
+            checkPeriod: 86400000
+        }),
         secret: COOKIE_SECRET,
         resave: false,
         saveUninitialized: true
