@@ -105,14 +105,11 @@ const queries = {
         const connectedClients = WebsocketServer.connectedClientUserIds();
 
         // Get the unseen counts for every participant of this query
-        const unseenCounts = await db.resolvers.queryuser
-            .getParticipantUnseenCounts(
-                {
-                    query_id: message.query_id
-                }
-            );
+        const counts = await db.resolvers.queryuser.getParticipantCounts({
+            query_id: message.query_id
+        });
         // Filter the results to only counts involving active clients
-        const withClient = unseenCounts.rows.filter((row) =>
+        const withClient = counts.rows.filter((row) =>
             connectedClients.indexOf(row.user_id > -1)
         );
         if (withClient.length > 0) {
