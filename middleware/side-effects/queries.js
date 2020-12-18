@@ -109,7 +109,9 @@ const queries = {
             query_id: message.query_id
         });
         // Filter the results to only counts involving active clients
+        // who are not the creator
         const withClient = counts.rows.filter((row) =>
+            parseInt(row.user_id) !== parseInt(message.creator_id) &&
             connectedClients.indexOf(row.user_id > -1)
         );
         if (withClient.length > 0) {
