@@ -94,7 +94,7 @@ const queries = {
             res.send();
             return; 
         }
-        db.resolvers.queries
+        return db.resolvers.queries
             .deleteQuery(req)
             .then((result) => {
                 if (result.rowCount === 0) {
