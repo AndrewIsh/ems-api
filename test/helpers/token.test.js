@@ -13,6 +13,21 @@ jest.mock('uuid', () => ({
     v4: () => '123'
 }));
 
+// Mock ems-db
+jest.mock('../../../ems-db', () => ({
+    resolvers: {
+        users: {
+            getUser: jest.fn(() => Promise.resolve({
+                rowCount: 1,
+                rows: [{
+                    id: 3,
+                    role_code: 5
+                }]
+            }))
+        }
+    }
+}));
+
 describe('getTokenFromRequest', () => {
     it('should return the token from a request object', () => {
         const mockRequest = {
@@ -83,10 +98,11 @@ describe('verifyJwt', () => {
 describe('generateRefresh', () => {
     it('should take a userId, call store and return a generated UUID', () => {
         AuthCache.store = jest.fn();
-        const newToken = token.generateRefresh('89');
+        const newToken = token.generateRefresh({ id: '89', role_code: 1 });
         expect(AuthCache.store).toBeCalledWith({
             userId: '89',
-            newToken: '123'
+            newToken: '123',
+            role: 1
         });
         expect(newToken).toEqual('123');
     });
@@ -168,6 +184,7 @@ describe('postJwtAuth', () => {
 */
 
 describe('doRefresh', () => {
+    AuthCache.store = jest.fn();
     AuthCache.findByToken = jest.fn((passed) => passed);
     const goodMockRequest = {
         cookies: {
@@ -200,8 +217,9 @@ describe('doRefresh', () => {
         expect(mockNext).toBeCalled();
     });
     */
-    it('when passed a request containing a valid refresh token, should form res correctly', () => {
-        doRefresh(goodMockRequest, mockRes, mockNext);
+    it('when passed a request containing a valid refresh token, should form res correctly', async () => {
+        AuthCache.findByToken = jest.fn(() => 3);
+        await doRefresh(goodMockRequest, mockRes, mockNext);
         expect(resSet).toBeCalled();
         expect(resStatus).toBeCalledWith(200);
         expect(resSend).toBeCalled();
@@ -218,9 +236,9 @@ describe('doRefresh', () => {
         expect(resSend).toBeCalledWith('Missing refresh token');
         expect(mockNext).toBeCalled();
     });
-    it('when passed a request with a token not in the cache, should form res correctly', () => {
+    it('when passed a request with a token not in the cache, should form res correctly', async () => {
         AuthCache.findByToken = jest.fn(() => null);
-        doRefresh(goodMockRequest, mockRes, mockNext);
+        await doRefresh(goodMockRequest, mockRes, mockNext);
         expect(resStatus).toBeCalledWith(401);
         expect(resSend).toBeCalledWith('Invalid refresh token');
         expect(mockNext).toBeCalled();
