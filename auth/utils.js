@@ -27,6 +27,7 @@ const getAvailableAuthtypes = () => {
     }
 
     const { hasSaml, NAME: samlName, LOGOUT_ENDPOINT } = samlConfig();
+
     if (hasSaml) {
         availableMethods.push({
             id: 'saml',
@@ -64,7 +65,7 @@ const googleConfig = () => {
     };
     return {
         ...config,
-        hasGoogle: config.CLIENT_ID !== 'null' && config.CLIENT_SECRET !== 'null' ? true : false
+        hasGoogle: allEnvPopulated([config.CLIENT_ID])
     };
 };
 
@@ -77,11 +78,11 @@ const samlConfig = () => {
     };
 
     const hasSaml = () => {
-        return config.ENTRY_POINT !== 'null' &&
-            config.ISSUER_STRING !== 'null' &&
-            config.LOGOUT_ENDPOINT !== 'null'
-            ? true
-            : false;
+        return allEnvPopulated([
+            config.ENTRY_POINT,
+            config.ISSUER_STRING,
+            config.LOGOUT_ENDPOINT
+        ]);
     };
 
     return {
@@ -107,7 +108,8 @@ const shibConfig = () => {
     requiredProps.forEach(
         (prop) => {
             const val = process.env[`SHIB_${prop}`];
-            if (val !== 'null') {
+            const isPopulated = allEnvPopulated([val]);
+            if (isPopulated) {
                 config[prop] = val;
             }
         }
@@ -132,9 +134,11 @@ const twitterConfig = () => {
     };
     return {
         ...config,
-        hasTwitter: config.CONSUMER_KEY !== 'null' &&
-            config.CONSUMER_SECRET !== 'null' &&
-            config.COOKIE_SECRET !== 'null' ? true : false
+        hasTwitter: allEnvPopulated([
+            process.env.TWITTER_COOKIE_SECRET,
+            process.env.TWITTER_OAUTH_CONSUMER_KEY,
+            process.env.TWITTER_OAUTH_CONSUMER_SECRET
+        ])
     };
 };
 
@@ -145,8 +149,7 @@ const facebookConfig = () => {
     };
     return {
         ...config,
-        hasFacebook: config.APP_ID !== 'null' &&
-            config.APP_SECRET !== 'null' ? true : false
+        hasFacebook: allEnvPopulated([config.APP_SECRET, config.APP_ID])
     };
 };
 
@@ -164,6 +167,16 @@ const checkIsInRole = (...roles) => (req, res, next) => {
     }
 
     return next();
+};
+
+const allEnvPopulated = props => {
+    let populated = 0;
+    for (const prop of props) {
+        if (prop !== 'null' && prop !== undefined) {
+            populated++;
+        }
+    }
+    return populated === props.length;
 };
 
 module.exports = {
