@@ -18,8 +18,8 @@ describe('constructor', () => {
 
 describe('store', () => {
     it('stores a token in the cache', () => {
-        AuthCache.store({ userId: 'Lando', newToken: '2187' });
-        expect(AuthCache.cache).toEqual({ Lando: '218710' });
+        AuthCache.store({ userId: 'Lando', newToken: '2187', role: 5 });
+        expect(AuthCache.cache).toEqual({ Lando: { token: '218710', role: 5 } });
     });
 });
 

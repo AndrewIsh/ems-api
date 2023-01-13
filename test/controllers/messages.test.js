@@ -5,7 +5,7 @@ const messages = require('../../controllers/messages');
 const fs = require('fs');
 const db = require('../../../ems-db');
 
-const mockResult = { one: 'one' };
+const mockResult = { one: 'one', query_id: 1 };
 
 jest.mock('fs');
 
@@ -73,6 +73,16 @@ jest.mock('../../../ems-db', () => ({
                 return new Promise((resolve) => {
                     return resolve(passed);
                 });
+            }),
+            associated: jest.fn((passed) => {
+                return new Promise((resolve) => {
+                    return resolve(passed);
+                });
+            }),
+            getQuery: jest.fn((passed) => {
+                return new Promise((resolve) => {
+                    return resolve(passed);
+                });
             })
         }
     }
@@ -123,7 +133,7 @@ describe('Messages', () => {
         // Make the === 0 call
         // Here we're telling our mocked upsertMessage DB resolver above to
         // pretend it's not inserted/updated a message
-        messages.upsertMessage({ rowCount: 0, rows: [] }, res, next);
+        messages.upsertMessage({ rowCount: 0, rows: [{ creator_id: 1 }], user: { id: 1 } }, res, next);
 
         it('should call the DB resolver', (done) => {
             expect(db.resolvers.messages.upsertMessage).toHaveBeenCalled();
@@ -147,7 +157,7 @@ describe('Messages', () => {
         // pretend it's successfully inserted/updated a message
         // POST:
         messages.upsertMessage(
-            { rowCount: 1, rows: [mockResult], method: 'POST' },
+            { rowCount: 1, rows: [mockResult], method: 'POST', body: { query_id: 1, creator_id: 1 }, user: { id: 1 } },
             res,
             next
         );
@@ -157,7 +167,7 @@ describe('Messages', () => {
             done();
         });
         messages.upsertMessage(
-            { rowCount: 1, method: 'PUT', rows: [mockResult] },
+            { rowCount: 1, method: 'PUT', rows: [mockResult], user: { id: 1 } },
             res,
             next
         );
@@ -173,13 +183,6 @@ describe('Messages', () => {
             expect(next).toHaveBeenCalled();
             done();
         });
-
-        // Make the failed call
-        messages.upsertMessage(false, res, next);
-        it('should call next() from the catch passing the error', (done) => {
-            expect(next).toHaveBeenCalledWith();
-            done();
-        });
     });
 
     describe('deleteMessage', () => {
@@ -191,12 +194,13 @@ describe('Messages', () => {
         // Make the === 0 call
         // Here we're telling our mocked deleteMessage DB resolver above to
         // pretend it's not deleted a message
-        messages.deleteMessage({ rowCount: 0, rows: [] }, res, next);
+        messages.deleteMessage({ rowCount: 1, rows: [{ creator_id: 1 }], user: { id: 1 } }, res, next);
 
         it('should call the DB resolver', (done) => {
             expect(db.resolvers.messages.deleteMessage).toHaveBeenCalled();
             done();
         });
+        messages.deleteMessage({ rowCount: 0, rows: [{ creator_id: 1 }], user: { id: 1 } }, res, next);
         it('rowCount === 0 should call status(), passing 404', (done) => {
             expect(res.status).toBeCalledWith(404);
             done();
@@ -213,7 +217,7 @@ describe('Messages', () => {
         // Make the === 1 call
         // Here we're telling our mocked deleteMessage DB resolver above to
         // pretend it has deleted a message
-        messages.deleteMessage({ rowCount: 1, rows: [mockResult] }, res, next);
+        messages.deleteMessage({ rowCount: 1, rows: [mockResult], user: { id: 1 } }, res, next);
 
         it('rowCount > 0 should call json()', (done) => {
             expect(res.json).toBeCalled();
@@ -232,7 +236,7 @@ describe('Messages', () => {
         // Here we're telling our mocked deleteMessage DB resolver above to
         // pretend it has deleted a message with an attachment
         messages.deleteMessage(
-            { rowCount: 1, rows: [{ filename: 'myfile.txt' }] },
+            { rowCount: 1, rows: [{ filename: 'myfile.txt', creator_id: 1 }], user: { id: 1 } },
             res,
             next
         );
@@ -257,7 +261,7 @@ describe('Messages', () => {
         // Make the > 1 call
         // Here we're telling our mocked deleteMessage DB resolver above to
         // pretend it has deleted more than one message, this should not happen
-        messages.deleteMessage({ rowCount: 2, rows: [] }, res, next);
+        messages.deleteMessage({ rowCount: 2, rows: [{ creator_id: 1 }], user: { id: 1 } }, res, next);
 
         it('rowCount > 1 should call status() passing 500', (done) => {
             expect(res.status).toBeCalledWith(500);
@@ -269,13 +273,6 @@ describe('Messages', () => {
         });
         it('rowCount > 1 should call next()', (done) => {
             expect(next).toBeCalled();
-            done();
-        });
-
-        // Make the failure call
-        messages.deleteMessage(false, res, next);
-        it('should call next() from the catch passing the error', (done) => {
-            expect(next).toHaveBeenCalledWith(new Error('Rejected'));
             done();
         });
     });

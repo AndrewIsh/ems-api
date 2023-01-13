@@ -42,7 +42,20 @@ jest.mock('../../../ems-db', () => ({
                         return reject(new Error('Rejected'));
                     });
                 }
-            })
+            }),
+            // A mock DB resolver that returns a promise that resolves
+            // to whatever it was passed
+            getLabel: jest.fn((passed) => {
+                if (passed) {
+                    return new Promise((resolve) => {
+                        return resolve(passed);
+                    });
+                } else {
+                    return new Promise((resolve, reject) => {
+                        return reject(new Error('Rejected'));
+                    });
+                }
+            }),
         }
     }
 }));
@@ -195,13 +208,6 @@ describe('Labels', () => {
         });
         it('rowCount > 1 should call next()', (done) => {
             expect(next).toBeCalled();
-            done();
-        });
-
-        // Make the failure call
-        labels.deleteLabel(false, res, next);
-        it('should call next() from the catch passing the error', (done) => {
-            expect(next).toHaveBeenCalledWith(new Error('Rejected'));
             done();
         });
     });

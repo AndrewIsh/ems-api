@@ -75,7 +75,7 @@ const mockQueries = {
 describe('queries', () => {
     describe('addEmbeds', () => {
         // Make the call
-        helpers.addEmbeds(mockQueries);
+        helpers.addEmbeds(mockQueries.rows);
 
         it('should call initiators with the IDs of the passed queries', (done) => {
             expect(db.resolvers.queries.initiators).toHaveBeenCalledWith([
@@ -103,7 +103,7 @@ describe('queries', () => {
             done();
         });
         it('should return correctly embellished query objects', () => {
-            return helpers.addEmbeds(mockQueries).then((ret) => {
+            return helpers.addEmbeds(mockQueries.rows).then((ret) => {
                 expect(ret).toEqual([
                     {
                         id: 1,

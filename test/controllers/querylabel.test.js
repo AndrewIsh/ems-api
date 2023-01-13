@@ -59,6 +59,9 @@ jest.mock('../../../ems-db', () => ({
                     });
                 }
             })
+        },
+        users: {
+            allStaff: jest.fn(() => Promise.resolve({ rows: [{ id: 1 }] }))
         }
     }
 }));
@@ -75,7 +78,10 @@ describe('QueryLabels', () => {
                 {
                     rowCount: 1,
                     params: { query_id: '1,2,3', label_id: '5' },
-                    rows: [mockResult]
+                    rows: [mockResult],
+                    user: {
+                        id: 1
+                    }
                 },
                 res,
                 next,
@@ -117,7 +123,10 @@ describe('QueryLabels', () => {
                     {
                         rowCount: 1,
                         params: { query_id: '1,2,3', label_id: '5' },
-                        rows: [mockResult]
+                        rows: [mockResult],
+                        user: {
+                            id: 1
+                        }
                     },
                     res,
                     next,
@@ -158,7 +167,10 @@ describe('QueryLabels', () => {
                     {
                         rowCount: 1,
                         params: { query_id: '1138', label_id: '5' },
-                        rows: [mockResult]
+                        rows: [mockResult],
+                        user: {
+                            id: 1
+                        }
                     },
                     res,
                     next,

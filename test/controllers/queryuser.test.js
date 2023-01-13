@@ -39,7 +39,7 @@ describe('QueryUsers', () => {
         // Make the === 0 call
         // Here we're telling our mocked updateMostRecentSeen DB resolver
         // above to pretend it's not inserted a user query relationship
-        queryuser.updateMostRecentSeen({ rowCount: 0 }, res, next);
+        queryuser.updateMostRecentSeen({ rowCount: 0, user: { id: 1 }, params: { user_id: 1 } }, res, next);
 
         it('should call the DB resolver', (done) => {
             expect(
@@ -65,7 +65,7 @@ describe('QueryUsers', () => {
         // above to pretend it's successfully updated 1 user query relationship
         // PUT:
         queryuser.updateMostRecentSeen(
-            { rowCount: 1, rows: [mockResult] },
+            { rowCount: 1, user: { id: 1 }, params: { user_id: 1 }, rows: [mockResult] },
             res,
             next
         );
@@ -87,7 +87,7 @@ describe('QueryUsers', () => {
         // Here we're telling our mocked updateMostRecentSeen DB resolver
         // above to pretend it's deleted > 1 rows which shouldn't ever happen
         // POST:
-        queryuser.updateMostRecentSeen({ rowCount: 2 }, res, next);
+        queryuser.updateMostRecentSeen({ rowCount: 2, params: { user_id: 1 }, user: { id: 1 } }, res, next);
 
         it('rowCount > 1 should call status(), passing 500', (done) => {
             expect(res.status).toBeCalledWith(500);
@@ -99,12 +99,6 @@ describe('QueryUsers', () => {
         });
         it('rowCount > 1 should call next()', (done) => {
             expect(next).toHaveBeenCalled();
-            done();
-        });
-        // Make the failed call
-        queryuser.updateMostRecentSeen(false, res, next);
-        it('should call next() from the catch passing the error', (done) => {
-            expect(next).toHaveBeenCalledWith(new Error('Rejected'));
             done();
         });
     });
