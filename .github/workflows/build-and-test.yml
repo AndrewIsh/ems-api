@@ -17,8 +17,8 @@ jobs:
             - name: Checkout ems-db repo
               uses: actions/checkout@v3
               with:
-                  name: AndrewIsh/ems-db
-                  ref: refs/heads/master
+                  repository: AndrewIsh/ems-db
+                  path: "./ems-db"
             - name: Checkout repo
               uses: actions/checkout@v3
             - name: Use Node.js ${{ matrix.node-version }}
