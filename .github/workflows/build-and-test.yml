@@ -14,6 +14,11 @@ jobs:
             matrix:
                 node-version: [16.x, 18.x]
         steps:
+            - name: Checkout ems-db repo
+              uses: actions/checkout@v3
+              with:
+                  name: AndrewIsh/ems-db
+                  ref: refs/heads/master
             - name: Checkout repo
               uses: actions/checkout@v3
             - name: Use Node.js ${{ matrix.node-version }}
